@@ -47,7 +47,17 @@ export default function App() {
     <div className="app">
       <header className="app__header">
         <h1 className="app__title">
-          Brain<span className="app__title-dim">Personal Dumping System v1.0</span>
+          <svg className="app__logo" viewBox="0 0 32 32" fill="none" strokeWidth="1.5">
+            <path d="M16 6C11.5817 6 8 9.58172 8 14C8 18.4183 11.5817 22 16 22V6Z" />
+            <path d="M16 6C20.4183 6 24 9.58172 24 14C24 18.4183 20.4183 22 16 22V6Z" />
+            <path d="M12 22C12 24.2091 13.7909 26 16 26C18.2091 26 20 24.2091 20 22" />
+            <path d="M12 14H20" />
+            <path d="M16 10V18" />
+          </svg>
+          <div className="app__title-info">
+            BRAIN
+            <span className="app__title-dim">Personal Dumping System v1.0</span>
+          </div>
         </h1>
         <div className="app__sync-indicator">
           <span

@@ -24,11 +24,21 @@
 }
 
 .app__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 24px;
   font-weight: 900;
   letter-spacing: -0.04em;
   color: var(--text);
   line-height: 0.8;
+}
+
+.app__logo {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  stroke: var(--text);
 }
 
 .app__title-dim {
