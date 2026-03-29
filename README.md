@@ -1,16 +1,35 @@
-# React + Vite
+# braindump (BD)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Personal Dumping System v1.0** — A technical, high-contrast digital workspace for offloading tasks, decisions, ideas, and worries. Designed with a minimalist **Outline / Skeletal UI** aesthetic for maximum clarity and zero distraction.
 
-Currently, two official plugins are available:
+## ◢ Core Modules
+- **TO-DOs**: Urgent tasks and small wins.
+- **DECISIONS**: Choices weighing on your mind that need resolution.
+- **IDEAS**: Creative sparks and project concepts worth exploring.
+- **LET GO**: Worries and external pressures—write them down and cross them out.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ◢ Key Features
+- **Daily Continuity**: Persistent date strip to track and revisit daily dumps.
+- **Live Synchronization**: Real-time Firebase integration with status indicators (Live / Connecting).
+- **Technical Progress Tracking**: Skeletal progress bars for each cognitive section.
+- **Mobile Optimized**: Swipe-to-delete gestures and double-tap editing for on-the-go offloading.
+- **Non-Destructive Past**: Read-only view for historical days to maintain a true record of your thoughts.
 
-## React Compiler
+## ◢ Tech Stack
+- **Frontend**: React 18 (Vite)
+- **Database**: Firebase (Firestore)
+- **Styling**: Vanilla CSS (Custom properties-based design system)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ◢ Installation
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1.  **Clone the repository**
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+3.  **Setup Environment**:
+    Create a `.env` file based on `.env.example` with your Firebase credentials.
+4.  **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
