@@ -41,13 +41,18 @@
   stroke: var(--text);
 }
 
+.app__title-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .app__title-dim {
   color: var(--text-dim);
   font-weight: 400;
   display: block;
   font-size: 11px;
   letter-spacing: 0.15em;
-  margin-top: 4px;
 }
 
 .app__sync-indicator {
@@ -204,7 +209,6 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 4px;
 }
 
 .section__title {
@@ -220,6 +224,7 @@
 }
 
 .section__subtitle {
+  margin: 0;
   font-size: 11px;
   color: var(--text-muted);
   max-width: 300px;
@@ -238,7 +243,7 @@
 /* Progress - Skeletal Style */
 .section__progress-bar-track {
   height: 6px;
-  border: var(--border-width) solid var(--line);
+  border: var(--border-width) solid var(--line-light);
   margin-top: 12px;
   position: relative;
   overflow: hidden;

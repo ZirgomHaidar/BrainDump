@@ -27,8 +27,14 @@ export default function App() {
 
   const isToday = selectedDate === todayStr();
 
+  const handleDateChange = (date) => {
+    if (date !== selectedDate) {
+      setSyncing(true);
+      setSelectedDate(date);
+    }
+  };
+
   useEffect(() => {
-    setSyncing(true);
     const unsubscribe = subscribeToItems(selectedDate, (allItems) => {
       setItems(allItems);
       setSyncing(false);
@@ -75,7 +81,7 @@ export default function App() {
         </div>
       )}
 
-      <DateStrip selectedDate={selectedDate} onChange={setSelectedDate} />
+      <DateStrip selectedDate={selectedDate} onChange={handleDateChange} />
 
       <main className="app__grid">
         {SECTIONS.map(({ key, title, subtitle }) => (
