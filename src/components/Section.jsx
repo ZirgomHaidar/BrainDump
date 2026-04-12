@@ -14,13 +14,6 @@ const EMPTY_PROMPTS = {
   letgo:     "Write anything worrying you that's out of your control.\nCross it out — it doesn't belong in your head.",
 };
 
-const PLACEHOLDERS = {
-  todos:     'Add a task...',
-  decisions: 'Add a decision...',
-  ideas:     'Add an idea...',
-  letgo:     'Add something to let go of...',
-};
-
 const TOGGLE_ICONS = {
   todos:     { inactive: '□', active: '■' },
   decisions: { inactive: '○', active: '●' },
@@ -31,8 +24,7 @@ const TOGGLE_ICONS = {
 // Swipe threshold in px before triggering delete
 const SWIPE_THRESHOLD = 75;
 
-export default function Section({ title, subtitle, sectionKey, items, onAdd, onDelete, onToggle, onEdit, readOnly }) {
-  const [inputValue, setInputValue]   = useState('');
+export default function Section({ title, subtitle, sectionKey, items, onDelete, onToggle, onEdit, readOnly }) {
   const [editingId, setEditingId]     = useState(null);
   const [editingText, setEditingText] = useState('');
   const [exitingIds, setExitingIds]   = useState(new Set());
@@ -59,18 +51,6 @@ export default function Section({ title, subtitle, sectionKey, items, onAdd, onD
       editInputRef.current.select();
     }
   }, [editingId]);
-
-  // ── Add ──────────────────────────────────────────────
-  function handleAdd() {
-    const text = inputValue.trim();
-    if (!text) return;
-    onAdd(text);
-    setInputValue('');
-  }
-
-  function handleInputKeyDown(e) {
-    if (e.key === 'Enter') handleAdd();
-  }
 
   // ── Delete (with exit animation) ─────────────────────
   const triggerDelete = useCallback((id) => {
@@ -267,22 +247,6 @@ export default function Section({ title, subtitle, sectionKey, items, onAdd, onD
         })}
       </ul>
 
-      {/* Add input */}
-      {!readOnly && (
-        <div className="section__add">
-          <input
-            className="section__input"
-            type="text"
-            placeholder={PLACEHOLDERS[sectionKey]}
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            onKeyDown={handleInputKeyDown}
-          />
-          <button className="section__add-btn" onClick={handleAdd} aria-label="Add item">
-            +
-          </button>
-        </div>
-      )}
     </div>
   );
 }

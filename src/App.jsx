@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { addItem, deleteItem, updateItem, subscribeToItems } from './firebase';
+import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates } from './firebase';
 import Section from './components/Section';
 import DateStrip from './components/DateStrip';
+import FloatingInput from './components/FloatingInput';
 import './App.css';
 
 const SECTIONS = [
@@ -24,6 +25,7 @@ export default function App() {
   const [syncing, setSyncing] = useState(true);
   const [error, setError]   = useState(null);
   const [selectedDate, setSelectedDate] = useState(todayStr);
+  const [activeDates, setActiveDates] = useState(() => [todayStr()]);
 
   const isToday = selectedDate === todayStr();
 
@@ -33,6 +35,14 @@ export default function App() {
       setSelectedDate(date);
     }
   };
+
+  useEffect(() => {
+    const today = todayStr();
+    return subscribeToActiveDates((dates) => {
+      const merged = Array.from(new Set([...dates, today])).sort();
+      setActiveDates(merged);
+    });
+  }, []);
 
   useEffect(() => {
     const unsubscribe = subscribeToItems(selectedDate, (allItems) => {
@@ -81,7 +91,7 @@ export default function App() {
         </div>
       )}
 
-      <DateStrip selectedDate={selectedDate} onChange={handleDateChange} />
+      <DateStrip selectedDate={selectedDate} onChange={handleDateChange} activeDates={activeDates} />
 
       <main className="app__grid">
         {SECTIONS.map(({ key, title, subtitle }) => (
@@ -91,7 +101,6 @@ export default function App() {
             title={title}
             subtitle={subtitle}
             items={itemsBySection(key)}
-            onAdd={text => handleAdd(key, text)}
             onDelete={handleDelete}
             onToggle={handleToggle}
             onEdit={handleEdit}
@@ -99,6 +108,8 @@ export default function App() {
           />
         ))}
       </main>
+
+      {isToday && <FloatingInput onAdd={handleAdd} />}
     </div>
   );
 }

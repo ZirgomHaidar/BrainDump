@@ -46,6 +46,17 @@ export function updateItem(id, fields) {
   return updateDoc(doc(db, 'items', id), fields);
 }
 
+export function subscribeToActiveDates(callback) {
+  return onSnapshot(itemsRef, (snapshot) => {
+    const dateSet = new Set();
+    snapshot.docs.forEach(d => {
+      const date = d.data().date;
+      if (date) dateSet.add(date);
+    });
+    callback(Array.from(dateSet).sort());
+  });
+}
+
 export function subscribeToItems(date, callback) {
   const q = query(itemsRef, where('date', '==', date));
   return onSnapshot(q, (snapshot) => {
