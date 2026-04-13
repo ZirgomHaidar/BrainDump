@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates } from './firebase';
+import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates, signOutUser } from './firebase';
 import Section from './components/Section';
 import DateStrip from './components/DateStrip';
 import FloatingInput from './components/FloatingInput';
@@ -77,12 +77,17 @@ export default function App() {
             <span className="app__title-dim">Personal Dumping System v1.0</span>
           </div>
         </h1>
-        <div className="app__sync-indicator">
-          <span
-            className={`app__sync-dot${syncing ? ' app__sync-dot--loading' : ' app__sync-dot--live'}`}
-            title={syncing ? 'Connecting...' : 'Live sync active'}
-          />
-          <span className="app__sync-label">{syncing ? 'Connecting...' : 'Live'}</span>
+        <div className="app__header-right">
+          <div className="app__sync-indicator">
+            <span
+              className={`app__sync-dot${syncing ? ' app__sync-dot--loading' : ' app__sync-dot--live'}`}
+              title={syncing ? 'Connecting...' : 'Live sync active'}
+            />
+            <span className="app__sync-label">{syncing ? 'Connecting...' : 'Live'}</span>
+          </div>
+          <button className="app__signout" onClick={signOutUser} title="Sign out">
+            Sign out
+          </button>
         </div>
       </header>
 

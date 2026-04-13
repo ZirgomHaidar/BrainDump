@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import {
   getFirestore,
   collection,
@@ -24,6 +25,15 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+// ── Auth ──────────────────────────────────────────────────
+
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+
+export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
+export const signOutUser = () => signOut(auth);
+export const onAuthChange = (cb) => onAuthStateChanged(auth, cb);
 
 const itemsRef = collection(db, 'items');
 

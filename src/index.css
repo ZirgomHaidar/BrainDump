@@ -100,6 +100,69 @@ input {
   color: inherit;
 }
 
+/* ── Auth Gate ─────────────────────────────────────────── */
+
+.auth {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.auth__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px 40px;
+  border: var(--border-width) solid var(--line);
+  background: var(--bg);
+}
+
+.auth__logo {
+  width: 40px;
+  height: 40px;
+  color: var(--text);
+}
+
+.auth__title {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  margin: 0;
+}
+
+.auth__subtitle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.auth__btn {
+  margin-top: 8px;
+  padding: 10px 24px;
+  border: var(--border-width) solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.auth__btn:hover {
+  background: var(--active-bg);
+  color: var(--active-text);
+}
+
 /* ── Common Animations ─────────────────────────────────── */
 
 @keyframes slide-up {

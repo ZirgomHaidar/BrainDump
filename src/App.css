@@ -55,6 +55,29 @@
   letter-spacing: 0.15em;
 }
 
+.app__header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app__signout {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  border: var(--border-width) solid var(--line-light);
+  padding: 4px 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.app__signout:hover {
+  color: var(--text);
+  border-color: var(--line);
+}
+
 .app__sync-indicator {
   display: flex;
   flex-direction: column;
