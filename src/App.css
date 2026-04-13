@@ -204,9 +204,11 @@
   border-right: none;
 }
 
-.date-strip__day:hover {
-  background: var(--hover-bg);
-  color: var(--text);
+@media (hover: hover) {
+  .date-strip__day:hover {
+    background: var(--hover-bg);
+    color: var(--text);
+  }
 }
 
 .date-strip__day--active {
