@@ -1,0 +1,220 @@
+/* ── Journal Layout ─────────────────────────────────────── */
+
+.journal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg);
+}
+
+@media (min-width: 800px) {
+  .journal {
+    flex-direction: row;
+  }
+
+  .journal__cal-pane {
+    width: 360px;
+    flex-shrink: 0;
+    border-right: var(--border-width) solid var(--line);
+    overflow-y: auto;
+  }
+
+  .journal__entry-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+}
+
+/* ── Calendar ───────────────────────────────────────────── */
+
+.jcal {
+  padding: 20px;
+}
+
+.jcal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: var(--border-width) solid var(--line);
+  margin-bottom: 20px;
+}
+
+.jcal__nav {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border-width) solid var(--line-light);
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.jcal__nav:hover {
+  background: var(--hover-bg);
+  color: var(--text);
+}
+
+.jcal__month {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.jcal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 4px;
+}
+
+.jcal__dow {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-dim);
+  padding: 4px 0 10px;
+  text-transform: uppercase;
+}
+
+.jcal__empty {
+  /* spacer */
+}
+
+.jcal__day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  position: relative;
+  transition: background 0.15s, color 0.15s;
+}
+
+.jcal__day:hover {
+  background: var(--hover-bg);
+  color: var(--text);
+}
+
+/* Day with existing entry — subtle border */
+.jcal__day--has-entry {
+  border: var(--border-width) solid var(--line-light);
+  color: var(--text);
+}
+
+/* Today — outlined */
+.jcal__day--today {
+  border: var(--border-width) solid var(--line);
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* Selected — inverted (active style) */
+.jcal__day--selected {
+  background: var(--active-bg);
+  color: var(--active-text);
+  font-weight: 700;
+}
+
+/* Today + selected */
+.jcal__day--today.jcal__day--selected {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+/* ── Journal Entry ──────────────────────────────────────── */
+
+.jentry {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px;
+  gap: 16px;
+  min-height: 0;
+}
+
+@media (min-width: 800px) {
+  .jentry {
+    height: 100%;
+  }
+}
+
+.jentry__prompt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: var(--border-width) solid var(--line);
+}
+
+.jentry__prompt-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.jentry__prompt-info {
+  flex: 1;
+}
+
+.jentry__prompt-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.jentry__prompt-date {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.jentry__saving {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.jentry__textarea {
+  flex: 1;
+  border: var(--border-width) solid var(--line-light);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.75;
+  padding: 16px;
+  resize: none;
+  outline: none;
+  min-height: 220px;
+  transition: border-color 0.2s;
+}
+
+.jentry__textarea::placeholder {
+  color: var(--text-dim);
+}
+
+.jentry__textarea:focus {
+  border-color: var(--line);
+}

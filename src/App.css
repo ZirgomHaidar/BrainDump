@@ -87,6 +87,44 @@
   50% { border-color: transparent; }
 }
 
+/* ── Tab Nav ───────────────────────────────────────────── */
+
+.app__tabs {
+  display: flex;
+  border-bottom: var(--border-width) solid var(--line);
+  background: var(--bg);
+  position: sticky;
+  top: 57px;
+  z-index: 90;
+}
+
+.app__tab {
+  flex: 1;
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  border-right: var(--border-width) solid var(--line);
+  transition: background 0.15s, color 0.15s;
+}
+
+.app__tab:last-child {
+  border-right: none;
+}
+
+.app__tab:hover:not(.app__tab--active) {
+  background: var(--hover-bg);
+  color: var(--text);
+}
+
+.app__tab--active {
+  background: var(--active-bg);
+  color: var(--active-text);
+}
+
 /* ── Error ─────────────────────────────────────────────── */
 
 .app__error {

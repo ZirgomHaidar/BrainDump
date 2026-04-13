@@ -3,6 +3,7 @@ import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDat
 import Section from './components/Section';
 import DateStrip from './components/DateStrip';
 import FloatingInput from './components/FloatingInput';
+import Journal from './components/Journal';
 import './App.css';
 
 const SECTIONS = [
@@ -21,6 +22,7 @@ const toLocalDateStr = (d) => {
 const todayStr = () => toLocalDateStr(new Date());
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState('brain');
   const [items, setItems]   = useState([]);
   const [syncing, setSyncing] = useState(true);
   const [error, setError]   = useState(null);
@@ -84,6 +86,21 @@ export default function App() {
         </div>
       </header>
 
+      <nav className="app__tabs">
+        <button
+          className={`app__tab${activeTab === 'brain' ? ' app__tab--active' : ''}`}
+          onClick={() => setActiveTab('brain')}
+        >
+          Brain Dump
+        </button>
+        <button
+          className={`app__tab${activeTab === 'journal' ? ' app__tab--active' : ''}`}
+          onClick={() => setActiveTab('journal')}
+        >
+          Journal
+        </button>
+      </nav>
+
       {error && (
         <div className="app__error">
           <strong>Error:</strong> {error}
@@ -91,25 +108,29 @@ export default function App() {
         </div>
       )}
 
-      <DateStrip selectedDate={selectedDate} onChange={handleDateChange} activeDates={activeDates} />
+      {activeTab === 'brain' && (
+        <>
+          <DateStrip selectedDate={selectedDate} onChange={handleDateChange} activeDates={activeDates} />
+          <main className="app__grid">
+            {SECTIONS.map(({ key, title, subtitle }) => (
+              <Section
+                key={key}
+                sectionKey={key}
+                title={title}
+                subtitle={subtitle}
+                items={itemsBySection(key)}
+                onDelete={handleDelete}
+                onToggle={handleToggle}
+                onEdit={handleEdit}
+                readOnly={!isToday}
+              />
+            ))}
+          </main>
+          {isToday && <FloatingInput onAdd={handleAdd} />}
+        </>
+      )}
 
-      <main className="app__grid">
-        {SECTIONS.map(({ key, title, subtitle }) => (
-          <Section
-            key={key}
-            sectionKey={key}
-            title={title}
-            subtitle={subtitle}
-            items={itemsBySection(key)}
-            onDelete={handleDelete}
-            onToggle={handleToggle}
-            onEdit={handleEdit}
-            readOnly={!isToday}
-          />
-        ))}
-      </main>
-
-      {isToday && <FloatingInput onAdd={handleAdd} />}
+      {activeTab === 'journal' && <Journal />}
     </div>
   );
 }

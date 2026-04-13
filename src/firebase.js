@@ -5,6 +5,7 @@ import {
   addDoc,
   deleteDoc,
   updateDoc,
+  setDoc,
   doc,
   onSnapshot,
   serverTimestamp,
@@ -56,6 +57,29 @@ export function subscribeToActiveDates(callback) {
     callback(Array.from(dateSet).sort());
   });
 }
+
+// ── Journal ──────────────────────────────────────────────
+
+const journalRef = collection(db, 'journal');
+
+export function saveJournalEntry(date, text) {
+  if (!text.trim()) return deleteDoc(doc(db, 'journal', date));
+  return setDoc(doc(db, 'journal', date), { date, text, updatedAt: serverTimestamp() });
+}
+
+export function subscribeToJournalEntry(date, callback) {
+  return onSnapshot(doc(db, 'journal', date), (snap) => {
+    callback(snap.exists() ? snap.data().text || '' : '');
+  });
+}
+
+export function subscribeToJournalDates(callback) {
+  return onSnapshot(journalRef, (snap) => {
+    callback(snap.docs.map((d) => d.id));
+  });
+}
+
+// ── Items ─────────────────────────────────────────────────
 
 export function subscribeToItems(date, callback) {
   const q = query(itemsRef, where('date', '==', date));
