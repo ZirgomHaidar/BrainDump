@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
-import { onAuthChange, signInWithGoogle, handleRedirectResult } from '../firebase';
+import { onAuthChange, signInWithGoogle } from '../firebase';
 
 export default function AuthGate({ children }) {
   const [user, setUser] = useState(undefined);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    handleRedirectResult().catch((e) => setError(e.message));
-    return onAuthChange(setUser);
-  }, []);
+  useEffect(() => onAuthChange(setUser), []);
 
   const handleSignIn = () => {
     setError(null);
