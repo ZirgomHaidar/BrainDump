@@ -163,6 +163,17 @@ input {
   color: var(--active-text);
 }
 
+.auth__error {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-danger);
+  border: var(--border-width) solid var(--color-danger);
+  padding: 6px 12px;
+  text-align: center;
+  margin: 0;
+  max-width: 260px;
+}
+
 /* ── Common Animations ─────────────────────────────────── */
 
 @keyframes slide-up {

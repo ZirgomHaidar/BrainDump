@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react';
-import { onAuthChange, signInWithGoogle } from '../firebase';
+import { onAuthChange, signInWithGoogle, handleRedirectResult } from '../firebase';
 
 export default function AuthGate({ children }) {
-  const [user, setUser] = useState(undefined); // undefined=loading, null=signed out
+  const [user, setUser] = useState(undefined);
+  const [error, setError] = useState(null);
 
-  useEffect(() => onAuthChange(setUser), []);
+  useEffect(() => {
+    handleRedirectResult().catch((e) => setError(e.message));
+    return onAuthChange(setUser);
+  }, []);
 
-  if (user === undefined) return null; // brief flash while Firebase resolves session
+  const handleSignIn = () => {
+    setError(null);
+    signInWithGoogle().catch((e) => setError(e.message));
+  };
+
+  if (user === undefined) return null;
 
   if (!user) return (
     <div className="auth">
@@ -20,7 +29,8 @@ export default function AuthGate({ children }) {
         </svg>
         <h1 className="auth__title">BRAIN</h1>
         <p className="auth__subtitle">Personal Dumping System</p>
-        <button className="auth__btn" onClick={signInWithGoogle}>
+        {error && <p className="auth__error">{error}</p>}
+        <button className="auth__btn" onClick={handleSignIn}>
           Sign in with Google
         </button>
       </div>
