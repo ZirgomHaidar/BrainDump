@@ -1,0 +1,199 @@
+.chores {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.chores__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: var(--border-width) solid var(--line);
+}
+
+.chores__date-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+
+.chores__manage-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  border: var(--border-width) solid var(--line-light);
+  background: transparent;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.chores__manage-btn:hover {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--line);
+}
+
+.chores__progress {
+  padding: 12px 20px;
+  border-bottom: var(--border-width) solid var(--line-light);
+}
+
+.chores__progress-bar-track {
+  height: 6px;
+  border: var(--border-width) solid var(--line-light);
+  background: transparent;
+  margin-bottom: 6px;
+}
+
+.chores__progress-bar-fill {
+  height: 100%;
+  background: var(--active-bg);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chores__progress-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.chores__empty {
+  padding: 40px 20px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  text-align: center;
+  border: var(--border-width) dashed var(--line-light);
+  margin: 20px;
+}
+
+.chores__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chores__item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: var(--border-width) solid var(--line-light);
+  transition: background 0.1s;
+}
+
+.chores__item:hover {
+  background: var(--hover-bg);
+}
+
+.chores__item:last-child {
+  border-bottom: none;
+}
+
+.chores__check {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: var(--border-width) solid var(--line);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.chores__check--done {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+.chores__label {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  transition: color 0.15s;
+}
+
+.chores__label--done {
+  color: var(--text-dim);
+  text-decoration: line-through;
+}
+
+.chores__remove {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.15s;
+}
+
+.chores__remove:hover {
+  color: var(--color-danger);
+}
+
+.chores__add-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-top: var(--border-width) solid var(--line-light);
+  margin-top: auto;
+}
+
+.chores__add-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 14px 20px;
+  outline: none;
+}
+
+.chores__add-input::placeholder {
+  color: var(--text-dim);
+}
+
+.chores__add-submit {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  border: none;
+  border-left: var(--border-width) solid var(--line-light);
+  background: transparent;
+  padding: 0 20px;
+  height: 48px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.chores__add-submit:hover {
+  background: var(--active-bg);
+  color: var(--active-text);
+}

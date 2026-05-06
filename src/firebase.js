@@ -1,7 +1,9 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import {
-  getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
   collection,
   addDoc,
   deleteDoc,
@@ -12,6 +14,8 @@ import {
   serverTimestamp,
   query,
   where,
+  orderBy,
+  deleteField,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -24,7 +28,11 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+  }),
+});
 
 // ── Auth ──────────────────────────────────────────────────
 
@@ -86,6 +94,96 @@ export function subscribeToJournalEntry(date, callback) {
 export function subscribeToJournalDates(callback) {
   return onSnapshot(journalRef, (snap) => {
     callback(snap.docs.map((d) => d.id));
+  });
+}
+
+// ── Weekly Plan ───────────────────────────────────────────
+
+const weeklyRef = collection(db, 'weeklyItems');
+
+export function addWeeklyItem(weekStr, dayIndex, text) {
+  return addDoc(weeklyRef, { weekStr, dayIndex, text, done: false, createdAt: serverTimestamp() });
+}
+
+export function deleteWeeklyItem(id) {
+  return deleteDoc(doc(db, 'weeklyItems', id));
+}
+
+export function toggleWeeklyItem(id, done) {
+  return updateDoc(doc(db, 'weeklyItems', id), { done });
+}
+
+export function subscribeToWeeklyItems(weekStr, callback) {
+  const q = query(weeklyRef, where('weekStr', '==', weekStr), orderBy('createdAt'));
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+  });
+}
+
+// ── Morning Chores ────────────────────────────────────────
+
+const choresRef = collection(db, 'morningChores');
+
+export function addChore(text, order) {
+  return addDoc(choresRef, { text, order, createdAt: serverTimestamp() });
+}
+
+export function deleteChore(id) {
+  return deleteDoc(doc(db, 'morningChores', id));
+}
+
+export function subscribeToChores(callback) {
+  const q = query(choresRef, orderBy('order'));
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+  });
+}
+
+export function subscribeToChoreLog(dateStr, callback) {
+  return onSnapshot(doc(db, 'morningChoreLog', dateStr), (snap) => {
+    callback(snap.exists() ? snap.data() : {});
+  });
+}
+
+export function toggleChoreLog(dateStr, choreId, completed) {
+  const ref = doc(db, 'morningChoreLog', dateStr);
+  if (completed) {
+    return setDoc(ref, { [choreId]: true }, { merge: true });
+  }
+  return updateDoc(ref, { [choreId]: deleteField() });
+}
+
+// ── Pomodoro ──────────────────────────────────────────────
+
+const pomodoroRef = collection(db, 'pomodoroSessions');
+
+export function logPomodoroSession(title, date) {
+  return addDoc(pomodoroRef, { title, date, completedAt: serverTimestamp(), duration: 25 });
+}
+
+export function subscribeToPomodoroSessions(dateStr, callback) {
+  const q = query(pomodoroRef, where('date', '==', dateStr), orderBy('completedAt'));
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+  });
+}
+
+// ── Reflections ───────────────────────────────────────────
+
+const reflectionsRef = collection(db, 'reflections');
+
+export function addReflection(text, category) {
+  return addDoc(reflectionsRef, { text, category: category || null, createdAt: serverTimestamp() });
+}
+
+export function deleteReflection(id) {
+  return deleteDoc(doc(db, 'reflections', id));
+}
+
+export function subscribeToReflections(callback) {
+  const q = query(reflectionsRef, orderBy('createdAt', 'desc'));
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
   });
 }
 
