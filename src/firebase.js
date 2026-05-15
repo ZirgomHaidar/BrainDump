@@ -76,27 +76,6 @@ export function subscribeToActiveDates(callback) {
   });
 }
 
-// ── Journal ──────────────────────────────────────────────
-
-const journalRef = collection(db, 'journal');
-
-export function saveJournalEntry(date, text) {
-  if (!text.trim()) return deleteDoc(doc(db, 'journal', date));
-  return setDoc(doc(db, 'journal', date), { date, text, updatedAt: serverTimestamp() });
-}
-
-export function subscribeToJournalEntry(date, callback) {
-  return onSnapshot(doc(db, 'journal', date), (snap) => {
-    callback(snap.exists() ? snap.data().text || '' : '');
-  });
-}
-
-export function subscribeToJournalDates(callback) {
-  return onSnapshot(journalRef, (snap) => {
-    callback(snap.docs.map((d) => d.id));
-  });
-}
-
 // ── Weekly Plan ───────────────────────────────────────────
 
 const weeklyRef = collection(db, 'weeklyItems');
@@ -151,21 +130,6 @@ export function toggleChoreLog(dateStr, choreId, completed) {
     return setDoc(ref, { [choreId]: true }, { merge: true });
   }
   return updateDoc(ref, { [choreId]: deleteField() });
-}
-
-// ── Pomodoro ──────────────────────────────────────────────
-
-const pomodoroRef = collection(db, 'pomodoroSessions');
-
-export function logPomodoroSession(title, date) {
-  return addDoc(pomodoroRef, { title, date, completedAt: serverTimestamp(), duration: 25 });
-}
-
-export function subscribeToPomodoroSessions(dateStr, callback) {
-  const q = query(pomodoroRef, where('date', '==', dateStr), orderBy('completedAt'));
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
 }
 
 // ── Reflections ───────────────────────────────────────────

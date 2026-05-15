@@ -3,10 +3,8 @@ import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDat
 import Section from './components/Section';
 import DateStrip from './components/DateStrip';
 import FloatingInput from './components/FloatingInput';
-import Journal from './components/Journal';
 import WeeklyPlan from './components/WeeklyPlan';
 import MorningChores from './components/MorningChores';
-import Pomodoro from './components/Pomodoro';
 import Motivation from './components/Motivation';
 import './App.css';
 
@@ -26,7 +24,7 @@ const toLocalDateStr = (d) => {
 const todayStr = () => toLocalDateStr(new Date());
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('brain');
+  const [activeTab, setActiveTab] = useState('weekly');
   const [items, setItems]   = useState([]);
   const [syncing, setSyncing] = useState(true);
   const [error, setError]   = useState(null);
@@ -115,12 +113,6 @@ export default function App() {
           Brain Dump
         </button>
         <button
-          className={`app__tab${activeTab === 'journal' ? ' app__tab--active' : ''}`}
-          onClick={() => setActiveTab('journal')}
-        >
-          Journal
-        </button>
-        <button
           className={`app__tab${activeTab === 'weekly' ? ' app__tab--active' : ''}`}
           onClick={() => setActiveTab('weekly')}
         >
@@ -131,12 +123,6 @@ export default function App() {
           onClick={() => setActiveTab('chores')}
         >
           Chores
-        </button>
-        <button
-          className={`app__tab${activeTab === 'pomodoro' ? ' app__tab--active' : ''}`}
-          onClick={() => setActiveTab('pomodoro')}
-        >
-          Pomodoro
         </button>
         <button
           className={`app__tab${activeTab === 'motivation' ? ' app__tab--active' : ''}`}
@@ -181,10 +167,8 @@ export default function App() {
         </>
       )}
 
-      {activeTab === 'journal'    && <Journal />}
       {activeTab === 'weekly'     && <WeeklyPlan />}
       {activeTab === 'chores'     && <MorningChores />}
-      {activeTab === 'pomodoro'   && <Pomodoro />}
       {activeTab === 'motivation' && <Motivation />}
     </div>
   );

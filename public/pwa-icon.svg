@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="15%" fill="#050505"/>
+  <g transform="scale(10) translate(9.6, 9.6)" fill="none" stroke="#ffffff" stroke-width="1.5">
+    <path d="M16 6C11.5817 6 8 9.58172 8 14C8 18.4183 11.5817 22 16 22V6Z" />
+    <path d="M16 6C20.4183 6 24 9.58172 24 14C24 18.4183 20.4183 22 16 22V6Z" />
+    <path d="M12 22C12 24.2091 13.7909 26 16 26C18.2091 26 20 24.2091 20 22" />
+    <path d="M12 14H20" />
+    <path d="M16 10V18" />
+  </g>
+</svg>

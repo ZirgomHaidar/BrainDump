@@ -113,15 +113,13 @@ export default function WeeklyPlan() {
               <div className="weekly__day-header">
                 <span className="weekly__day-name">{DAY_NAMES[dayIndex]}</span>
                 <span className="weekly__day-date">{formatShortDate(dateStr)}</span>
-                {!isPast && (
-                  <button
-                    className="weekly__add-btn"
-                    onClick={() => { setAddingDay(dayIndex); setInputText(''); }}
-                    aria-label={`Add task for ${DAY_NAMES[dayIndex]}`}
-                  >
-                    +
-                  </button>
-                )}
+                <button
+                  className="weekly__add-btn"
+                  onClick={() => { setAddingDay(dayIndex); setInputText(''); }}
+                  aria-label={`Add task for ${DAY_NAMES[dayIndex]}`}
+                >
+                  +
+                </button>
               </div>
 
               <ul className="weekly__task-list">
@@ -129,22 +127,19 @@ export default function WeeklyPlan() {
                   <li key={item.id} className={`weekly__task${item.done ? ' weekly__task--done' : ''}`}>
                     <button
                       className={`weekly__task-check${item.done ? ' weekly__task-check--done' : ''}`}
-                      onClick={() => !isPast && toggleWeeklyItem(item.id, !item.done)}
-                      disabled={isPast}
+                      onClick={() => toggleWeeklyItem(item.id, !item.done)}
                       aria-label="Toggle task"
                     >
                       {item.done ? '■' : '□'}
                     </button>
                     <span className="weekly__task-text">{item.text}</span>
-                    {!isPast && (
-                      <button
-                        className="weekly__task-delete"
-                        onClick={() => deleteWeeklyItem(item.id)}
-                        aria-label="Delete task"
-                      >
-                        ×
-                      </button>
-                    )}
+                    <button
+                      className="weekly__task-delete"
+                      onClick={() => deleteWeeklyItem(item.id)}
+                      aria-label="Delete task"
+                    >
+                      ×
+                    </button>
                   </li>
                 ))}
               </ul>
