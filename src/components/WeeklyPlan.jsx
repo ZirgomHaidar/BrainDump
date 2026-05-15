@@ -65,18 +65,28 @@ export default function WeeklyPlan() {
     const d = new Date(weekMonday);
     d.setDate(d.getDate() - 7);
     setWeekMonday(d);
+    setAddingDay(null);
   }
 
   function nextWeek() {
     const d = new Date(weekMonday);
     d.setDate(d.getDate() + 7);
     setWeekMonday(d);
+    setAddingDay(null);
   }
 
   function handleAdd(e) {
     e.preventDefault();
     const text = inputText.trim();
     if (!text || addingDay === null) return;
+    
+    // Final safety check against past dates
+    const dateStr = weekDays[addingDay];
+    if (dateStr < today) {
+      setAddingDay(null);
+      return;
+    }
+
     addWeeklyItem(weekStr, addingDay, text);
     setInputText('');
     setAddingDay(null);
@@ -104,22 +114,26 @@ export default function WeeklyPlan() {
           const isPast = dateStr < today;
           const isToday = dateStr === today;
           const dayItems = items.filter((i) => i.dayIndex === dayIndex);
+          const allDone = dayItems.length > 0 && dayItems.every((i) => i.done);
+          const isDone = isPast && allDone;
 
           return (
             <div
               key={dateStr}
-              className={`weekly__day${isToday ? ' weekly__day--today' : ''}${isPast ? ' weekly__day--past' : ''}`}
+              className={`weekly__day${isToday ? ' weekly__day--today' : ''}${isPast ? ' weekly__day--past' : ''}${isDone ? ' weekly__day--done' : ''}`}
             >
               <div className="weekly__day-header">
                 <span className="weekly__day-name">{DAY_NAMES[dayIndex]}</span>
                 <span className="weekly__day-date">{formatShortDate(dateStr)}</span>
-                <button
-                  className="weekly__add-btn"
-                  onClick={() => { setAddingDay(dayIndex); setInputText(''); }}
-                  aria-label={`Add task for ${DAY_NAMES[dayIndex]}`}
-                >
-                  +
-                </button>
+                {!isPast && (
+                  <button
+                    className="weekly__add-btn"
+                    onClick={() => { setAddingDay(dayIndex); setInputText(''); }}
+                    aria-label={`Add task for ${DAY_NAMES[dayIndex]}`}
+                  >
+                    +
+                  </button>
+                )}
               </div>
 
               <ul className="weekly__task-list">
@@ -133,18 +147,20 @@ export default function WeeklyPlan() {
                       {item.done ? '■' : '□'}
                     </button>
                     <span className="weekly__task-text">{item.text}</span>
-                    <button
-                      className="weekly__task-delete"
-                      onClick={() => deleteWeeklyItem(item.id)}
-                      aria-label="Delete task"
-                    >
-                      ×
-                    </button>
+                    {!isPast && (
+                      <button
+                        className="weekly__task-delete"
+                        onClick={() => deleteWeeklyItem(item.id)}
+                        aria-label="Delete task"
+                      >
+                        ×
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
 
-              {addingDay === dayIndex && (
+              {addingDay === dayIndex && !isPast && (
                 <form className="weekly__inline-add" onSubmit={handleAdd}>
                   <input
                     ref={inputRef}
