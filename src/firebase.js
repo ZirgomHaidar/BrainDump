@@ -8,14 +8,12 @@ import {
   addDoc,
   deleteDoc,
   updateDoc,
-  setDoc,
   doc,
   onSnapshot,
   serverTimestamp,
   query,
   where,
   orderBy,
-  deleteField,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -97,39 +95,6 @@ export function subscribeToWeeklyItems(weekStr, callback) {
   return onSnapshot(q, (snap) => {
     callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
   });
-}
-
-// ── Morning Chores ────────────────────────────────────────
-
-const choresRef = collection(db, 'morningChores');
-
-export function addChore(text, order) {
-  return addDoc(choresRef, { text, order, createdAt: serverTimestamp() });
-}
-
-export function deleteChore(id) {
-  return deleteDoc(doc(db, 'morningChores', id));
-}
-
-export function subscribeToChores(callback) {
-  const q = query(choresRef, orderBy('order'));
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
-}
-
-export function subscribeToChoreLog(dateStr, callback) {
-  return onSnapshot(doc(db, 'morningChoreLog', dateStr), (snap) => {
-    callback(snap.exists() ? snap.data() : {});
-  });
-}
-
-export function toggleChoreLog(dateStr, choreId, completed) {
-  const ref = doc(db, 'morningChoreLog', dateStr);
-  if (completed) {
-    return setDoc(ref, { [choreId]: true }, { merge: true });
-  }
-  return updateDoc(ref, { [choreId]: deleteField() });
 }
 
 // ── Reflections ───────────────────────────────────────────

@@ -8,6 +8,14 @@
   background: transparent;
 }
 
+/* ── Sticky Top Bar ────────────────────────────────────── */
+
+.app__top {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
 /* ── Header ────────────────────────────────────────────── */
 
 .app__header {
@@ -16,9 +24,6 @@
   justify-content: space-between;
   padding: 12px 20px;
   border-bottom: var(--border-width) solid var(--line);
-  position: sticky;
-  top: 0;
-  z-index: 100;
   background: rgba(5, 5, 5, 0.85);
   backdrop-filter: blur(12px);
 }
@@ -123,9 +128,6 @@
   display: flex;
   border-bottom: var(--border-width) solid var(--line);
   background: var(--bg);
-  position: sticky;
-  top: 57px;
-  z-index: 90;
 }
 
 .app__tab {
@@ -238,7 +240,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 4px;
+  padding: 6px 4px;
   border-right: var(--border-width) solid var(--line);
   transition: background 0.2s, color 0.2s;
   font-family: var(--font-mono);
@@ -270,6 +272,26 @@
 
 .date-strip__num {
   font-size: 16px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.date-strip__month {
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+
+.date-strip__day:hover .date-strip__month {
+  color: var(--text-muted);
+}
+
+.date-strip__day--active .date-strip__month {
+  color: var(--active-text);
   font-weight: 700;
 }
 

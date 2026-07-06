@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates, signOutUser } from './firebase';
 import Section from './components/Section';
 import DateStrip from './components/DateStrip';
 import FloatingInput from './components/FloatingInput';
 import WeeklyPlan from './components/WeeklyPlan';
-import MorningChores from './components/MorningChores';
 import Motivation from './components/Motivation';
 import './App.css';
 
@@ -31,6 +30,23 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(todayStr);
   const [activeDates, setActiveDates] = useState(() => [todayStr()]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const topBarRef = useRef(null);
+
+  useEffect(() => {
+    if (!topBarRef.current) return;
+    const updateHeight = () => {
+      if (topBarRef.current) {
+        document.documentElement.style.setProperty(
+          '--app-top-height',
+          `${topBarRef.current.offsetHeight}px`
+        );
+      }
+    };
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(topBarRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const up   = () => setIsOnline(true);
@@ -77,60 +93,60 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="app__header">
-        <h1 className="app__title">
-          <svg className="app__logo" viewBox="0 0 32 32" fill="none" strokeWidth="1.5">
-            <path d="M16 6C11.5817 6 8 9.58172 8 14C8 18.4183 11.5817 22 16 22V6Z" />
-            <path d="M16 6C20.4183 6 24 9.58172 24 14C24 18.4183 20.4183 22 16 22V6Z" />
-            <path d="M12 22C12 24.2091 13.7909 26 16 26C18.2091 26 20 24.2091 20 22" />
-            <path d="M12 14H20" />
-            <path d="M16 10V18" />
-          </svg>
-          <div className="app__title-info">
-            BRAINDUMP
-            <span className="app__title-dim">Personal Dumping System v1.0</span>
+      <div className="app__top" ref={topBarRef}>
+        <header className="app__header">
+          <h1 className="app__title">
+            <svg className="app__logo" viewBox="0 0 32 32" fill="none" strokeWidth="1.5">
+              <path d="M16 6C11.5817 6 8 9.58172 8 14C8 18.4183 11.5817 22 16 22V6Z" />
+              <path d="M16 6C20.4183 6 24 9.58172 24 14C24 18.4183 20.4183 22 16 22V6Z" />
+              <path d="M12 22C12 24.2091 13.7909 26 16 26C18.2091 26 20 24.2091 20 22" />
+              <path d="M12 14H20" />
+              <path d="M16 10V18" />
+            </svg>
+            <div className="app__title-info">
+              BRAINDUMP
+              <span className="app__title-dim">Personal Dumping System v1.0</span>
+            </div>
+          </h1>
+          <div className="app__header-right">
+            <div className="app__sync-indicator">
+              <span
+                className={`app__sync-dot${syncing ? ' app__sync-dot--loading' : ' app__sync-dot--live'}`}
+                title={syncing ? 'Connecting...' : 'Live sync active'}
+              />
+              <span className="app__sync-label">{syncing ? 'Connecting...' : 'Live'}</span>
+            </div>
+            <button className="app__signout" onClick={signOutUser} title="Sign out">
+              Sign out
+            </button>
           </div>
-        </h1>
-        <div className="app__header-right">
-          <div className="app__sync-indicator">
-            <span
-              className={`app__sync-dot${syncing ? ' app__sync-dot--loading' : ' app__sync-dot--live'}`}
-              title={syncing ? 'Connecting...' : 'Live sync active'}
-            />
-            <span className="app__sync-label">{syncing ? 'Connecting...' : 'Live'}</span>
-          </div>
-          <button className="app__signout" onClick={signOutUser} title="Sign out">
-            Sign out
-          </button>
-        </div>
-      </header>
+        </header>
 
-      <nav className="app__tabs">
-        <button
-          className={`app__tab${activeTab === 'brain' ? ' app__tab--active' : ''}`}
-          onClick={() => setActiveTab('brain')}
-        >
-          Brain Dump
-        </button>
-        <button
-          className={`app__tab${activeTab === 'weekly' ? ' app__tab--active' : ''}`}
-          onClick={() => setActiveTab('weekly')}
-        >
-          Weekly
-        </button>
-        <button
-          className={`app__tab${activeTab === 'chores' ? ' app__tab--active' : ''}`}
-          onClick={() => setActiveTab('chores')}
-        >
-          Chores
-        </button>
-        <button
-          className={`app__tab${activeTab === 'motivation' ? ' app__tab--active' : ''}`}
-          onClick={() => setActiveTab('motivation')}
-        >
-          Motivation
-        </button>
-      </nav>
+        <nav className="app__tabs">
+          <button
+            className={`app__tab${activeTab === 'brain' ? ' app__tab--active' : ''}`}
+            onClick={() => setActiveTab('brain')}
+          >
+            Brain Dump
+          </button>
+          <button
+            className={`app__tab${activeTab === 'weekly' ? ' app__tab--active' : ''}`}
+            onClick={() => setActiveTab('weekly')}
+          >
+            Weekly
+          </button>
+          <button
+            className={`app__tab${activeTab === 'motivation' ? ' app__tab--active' : ''}`}
+            onClick={() => setActiveTab('motivation')}
+          >
+            Motivation
+          </button>
+        </nav>
+
+        {activeTab === 'brain' && (
+          <DateStrip selectedDate={selectedDate} onChange={handleDateChange} activeDates={activeDates} />
+        )}
+      </div>
 
       {!isOnline && (
         <div className="app__offline-banner">
@@ -147,7 +163,6 @@ export default function App() {
 
       {activeTab === 'brain' && (
         <>
-          <DateStrip selectedDate={selectedDate} onChange={handleDateChange} activeDates={activeDates} />
           <main className="app__grid">
             {SECTIONS.map(({ key, title, subtitle }) => (
               <Section
@@ -168,7 +183,6 @@ export default function App() {
       )}
 
       {activeTab === 'weekly'     && <WeeklyPlan />}
-      {activeTab === 'chores'     && <MorningChores />}
       {activeTab === 'motivation' && <Motivation />}
     </div>
   );

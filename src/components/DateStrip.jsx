@@ -14,23 +14,32 @@ const todayStr = () => toLocalDateStr(new Date());
 function formatDay(dateStr) {
   const [y, m, day] = dateStr.split('-').map(Number);
   const d = new Date(y, m - 1, day);
+  const currentYear = new Date().getFullYear();
+  const monthShort = d.toLocaleDateString('en', { month: 'short' }).toUpperCase();
+  const monthLabel = y !== currentYear ? `${monthShort} '${String(y).slice(2)}` : monthShort;
   return {
     date: dateStr,
     dayLabel: dateStr === todayStr() ? 'Today' : d.toLocaleDateString('en', { weekday: 'short' }),
     dayNum: day,
+    monthLabel,
   };
 }
 
 export default function DateStrip({ selectedDate, onChange, activeDates = [] }) {
   const [windowStart, setWindowStart] = useState(0);
+  const [prevSelectedDate, setPrevSelectedDate] = useState(selectedDate);
+  const [prevActiveDates, setPrevActiveDates] = useState(activeDates);
 
-  useEffect(() => {
-    if (!activeDates.length) return;
-    const idx = activeDates.indexOf(selectedDate);
-    const target = idx === -1 ? activeDates.length - 1 : idx;
-    const newStart = Math.max(0, Math.min(target - WINDOW_SIZE + 1, activeDates.length - WINDOW_SIZE));
-    setWindowStart(newStart);
-  }, [selectedDate, activeDates]);
+  if (selectedDate !== prevSelectedDate || activeDates !== prevActiveDates) {
+    setPrevSelectedDate(selectedDate);
+    setPrevActiveDates(activeDates);
+    if (activeDates.length) {
+      const idx = activeDates.indexOf(selectedDate);
+      const target = idx === -1 ? activeDates.length - 1 : idx;
+      const newStart = Math.max(0, Math.min(target - WINDOW_SIZE + 1, activeDates.length - WINDOW_SIZE));
+      setWindowStart(newStart);
+    }
+  }
 
   useEffect(() => {
     const handler = (e) => {
@@ -73,6 +82,7 @@ export default function DateStrip({ selectedDate, onChange, activeDates = [] }) 
           >
             <span className="date-strip__label">{day.dayLabel}</span>
             <span className="date-strip__num">{day.dayNum}</span>
+            <span className="date-strip__month">{day.monthLabel}</span>
           </button>
         ))}
       </div>

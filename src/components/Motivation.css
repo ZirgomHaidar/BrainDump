@@ -11,7 +11,7 @@
   gap: 0;
   border-bottom: var(--border-width) solid var(--line);
   position: sticky;
-  top: 97px;
+  top: var(--app-top-height, 131px);
   z-index: 10;
   background: var(--bg);
 }
