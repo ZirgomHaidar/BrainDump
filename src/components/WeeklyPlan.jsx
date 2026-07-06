@@ -65,8 +65,19 @@ function formatShortDate(dateStr) {
 }
 
 export default function WeeklyPlan() {
-  const currentWeekStr = useMemo(() => toWeekStr(getWeekMonday(new Date())), []);
-  const [activeWeeks, setActiveWeeks] = useState(() => [currentWeekStr]);
+  const currentMonday = useMemo(() => getWeekMonday(new Date()), []);
+  const upcomingWeeks = useMemo(() => {
+    const weeks = [];
+    for (let i = 0; i <= 4; i++) {
+      const d = new Date(currentMonday);
+      d.setDate(d.getDate() + i * 7);
+      weeks.push(toWeekStr(d));
+    }
+    return weeks;
+  }, [currentMonday]);
+
+  const currentWeekStr = upcomingWeeks[0];
+  const [activeWeeks, setActiveWeeks] = useState(() => upcomingWeeks);
   const [selectedWeek, setSelectedWeek] = useState(currentWeekStr);
   const [items, setItems] = useState([]);
   const [addingDay, setAddingDay] = useState(null);
@@ -75,10 +86,10 @@ export default function WeeklyPlan() {
 
   useEffect(() => {
     return subscribeToActiveWeeks((weeks) => {
-      const merged = Array.from(new Set([...weeks, currentWeekStr])).sort();
+      const merged = Array.from(new Set([...weeks, ...upcomingWeeks])).sort();
       setActiveWeeks(merged);
     });
-  }, [currentWeekStr]);
+  }, [upcomingWeeks]);
 
   const weekMonday = useMemo(() => getMondayFromWeekStr(selectedWeek), [selectedWeek]);
   const weekDays = useMemo(() => getWeekDays(weekMonday), [weekMonday]);
