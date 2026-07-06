@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { addWeeklyItem, deleteWeeklyItem, subscribeToWeeklyItems, toggleWeeklyItem } from '../firebase';
+import {
+  addWeeklyItem,
+  deleteWeeklyItem,
+  subscribeToActiveWeeks,
+  subscribeToWeeklyItems,
+  toggleWeeklyItem,
+} from '../firebase';
 import './WeeklyPlan.css';
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -32,6 +38,20 @@ function toWeekStr(monday) {
   return `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
 }
 
+function getMondayFromWeekStr(weekStr) {
+  const [yearStr, weekNumStr] = weekStr.split('-W');
+  const year = Number(yearStr);
+  const weekNum = Number(weekNumStr);
+  const jan4 = new Date(year, 0, 4);
+  const day = jan4.getDay();
+  const week1Monday = new Date(jan4);
+  week1Monday.setDate(jan4.getDate() - (day === 0 ? 6 : day - 1));
+  const monday = new Date(week1Monday);
+  monday.setDate(week1Monday.getDate() + (weekNum - 1) * 7);
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
+
 function getWeekDays(monday) {
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday);
@@ -45,35 +65,66 @@ function formatShortDate(dateStr) {
 }
 
 export default function WeeklyPlan() {
-  const [weekMonday, setWeekMonday] = useState(() => getWeekMonday(new Date()));
+  const currentWeekStr = useMemo(() => toWeekStr(getWeekMonday(new Date())), []);
+  const [activeWeeks, setActiveWeeks] = useState(() => [currentWeekStr]);
+  const [selectedWeek, setSelectedWeek] = useState(currentWeekStr);
   const [items, setItems] = useState([]);
   const [addingDay, setAddingDay] = useState(null);
   const [inputText, setInputText] = useState('');
   const inputRef = useRef(null);
 
-  const weekStr = useMemo(() => toWeekStr(weekMonday), [weekMonday]);
+  useEffect(() => {
+    return subscribeToActiveWeeks((weeks) => {
+      const merged = Array.from(new Set([...weeks, currentWeekStr])).sort();
+      setActiveWeeks(merged);
+    });
+  }, [currentWeekStr]);
+
+  const weekMonday = useMemo(() => getMondayFromWeekStr(selectedWeek), [selectedWeek]);
   const weekDays = useMemo(() => getWeekDays(weekMonday), [weekMonday]);
   const today = todayStr();
 
-  useEffect(() => subscribeToWeeklyItems(weekStr, setItems), [weekStr]);
+  useEffect(() => subscribeToWeeklyItems(selectedWeek, setItems), [selectedWeek]);
 
   useEffect(() => {
     if (addingDay !== null) inputRef.current?.focus();
   }, [addingDay]);
 
+  const currentIndex = activeWeeks.indexOf(selectedWeek);
+  const validIndex = currentIndex === -1 ? Math.max(0, activeWeeks.length - 1) : currentIndex;
+  const canGoPrev = validIndex > 0;
+  const canGoNext = validIndex < activeWeeks.length - 1;
+
   function prevWeek() {
-    const d = new Date(weekMonday);
-    d.setDate(d.getDate() - 7);
-    setWeekMonday(d);
-    setAddingDay(null);
+    if (canGoPrev) {
+      setSelectedWeek(activeWeeks[validIndex - 1]);
+      setAddingDay(null);
+    }
   }
 
   function nextWeek() {
-    const d = new Date(weekMonday);
-    d.setDate(d.getDate() + 7);
-    setWeekMonday(d);
-    setAddingDay(null);
+    if (canGoNext) {
+      setSelectedWeek(activeWeeks[validIndex + 1]);
+      setAddingDay(null);
+    }
   }
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (!e.ctrlKey || !activeWeeks.length) return;
+      if (e.key === '.' && canGoNext) {
+        e.preventDefault();
+        setSelectedWeek(activeWeeks[validIndex + 1]);
+        setAddingDay(null);
+      } else if (e.key === ',' && canGoPrev) {
+        e.preventDefault();
+        setSelectedWeek(activeWeeks[validIndex - 1]);
+        setAddingDay(null);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [activeWeeks, canGoNext, canGoPrev, validIndex]);
 
   function handleAdd(e) {
     e.preventDefault();
@@ -87,7 +138,7 @@ export default function WeeklyPlan() {
       return;
     }
 
-    addWeeklyItem(weekStr, addingDay, text);
+    addWeeklyItem(selectedWeek, addingDay, text);
     setInputText('');
     setAddingDay(null);
   }
@@ -104,9 +155,23 @@ export default function WeeklyPlan() {
   return (
     <div className="weekly">
       <div className="weekly__nav">
-        <button className="weekly__nav-btn" onClick={prevWeek}>‹ Prev</button>
-        <span className="weekly__week-label">{weekStr} · {weekLabel}</span>
-        <button className="weekly__nav-btn" onClick={nextWeek}>Next ›</button>
+        <button
+          className="weekly__nav-btn"
+          onClick={prevWeek}
+          disabled={!canGoPrev}
+          aria-label="Previous week with entries"
+        >
+          ‹ Prev
+        </button>
+        <span className="weekly__week-label">{selectedWeek} · {weekLabel}</span>
+        <button
+          className="weekly__nav-btn"
+          onClick={nextWeek}
+          disabled={!canGoNext}
+          aria-label="Next week with entries"
+        >
+          Next ›
+        </button>
       </div>
 
       <div className="weekly__grid">

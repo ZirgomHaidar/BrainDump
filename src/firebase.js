@@ -97,6 +97,17 @@ export function subscribeToWeeklyItems(weekStr, callback) {
   });
 }
 
+export function subscribeToActiveWeeks(callback) {
+  return onSnapshot(weeklyRef, (snapshot) => {
+    const weekSet = new Set();
+    snapshot.docs.forEach((d) => {
+      const week = d.data().weekStr;
+      if (week) weekSet.add(week);
+    });
+    callback(Array.from(weekSet).sort());
+  });
+}
+
 // ── Reflections ───────────────────────────────────────────
 
 const reflectionsRef = collection(db, 'reflections');

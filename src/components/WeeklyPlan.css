@@ -26,10 +26,16 @@
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.weekly__nav-btn:hover {
+.weekly__nav-btn:hover:not(:disabled) {
   background: var(--active-bg);
   color: var(--active-text);
   border-color: var(--line);
+}
+
+.weekly__nav-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+  pointer-events: none;
 }
 
 .weekly__week-label {
