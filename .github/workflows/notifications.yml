@@ -1,0 +1,46 @@
+name: Scheduled Push Notifications
+
+on:
+  push:
+    branches:
+      - dev
+  schedule:
+    # Runs every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Execution mode ("cron" for scheduled evaluation, "test" for instant test notification)'
+        required: true
+        default: 'cron'
+        type: choice
+        options:
+          - cron
+          - test
+
+jobs:
+  notify:
+    name: Check Schedules & Dispatch WebPush
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'scripts/package-lock.json'
+
+      - name: Install dependencies
+        run: npm --prefix scripts install
+
+      - name: Run Push Notification Cron
+        env:
+          CRON_MODE: ${{ github.event_name == 'push' && 'test' || github.event.inputs.mode || 'cron' }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT || vars.FIREBASE_SERVICE_ACCOUNT }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY || vars.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY || vars.VAPID_PRIVATE_KEY }}
+          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT || vars.VAPID_SUBJECT }}
+        run: node scripts/notify-cron.js

@@ -5,6 +5,9 @@ import DateStrip from './components/DateStrip';
 import FloatingInput from './components/FloatingInput';
 import WeeklyPlan from './components/WeeklyPlan';
 import Motivation from './components/Motivation';
+import NotificationSettings from './components/NotificationSettings';
+import { useNotificationScheduler } from './hooks/useNotificationScheduler';
+import { getNotificationSettings } from './services/notificationService';
 import './App.css';
 
 const SECTIONS = [
@@ -30,7 +33,11 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(todayStr);
   const [activeDates, setActiveDates] = useState(() => [todayStr()]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [notifEnabled, setNotifEnabled] = useState(() => getNotificationSettings().enabled);
   const topBarRef = useRef(null);
+
+  useNotificationScheduler(activeDates);
 
   useEffect(() => {
     if (!topBarRef.current) return;
@@ -109,6 +116,17 @@ export default function App() {
             </div>
           </h1>
           <div className="app__header-right">
+            <button
+              className={`app__notif-btn${notifEnabled ? ' app__notif-btn--active' : ''}`}
+              onClick={() => setIsNotifOpen(true)}
+              title="Notification Settings"
+              aria-label="Notification Settings"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            </button>
             <div className="app__sync-indicator">
               <span
                 className={`app__sync-dot${syncing ? ' app__sync-dot--loading' : ' app__sync-dot--live'}`}
@@ -184,6 +202,15 @@ export default function App() {
 
       {activeTab === 'weekly'     && <WeeklyPlan />}
       {activeTab === 'motivation' && <Motivation />}
+
+      <NotificationSettings
+        isOpen={isNotifOpen}
+        onClose={() => {
+          setIsNotifOpen(false);
+          setNotifEnabled(getNotificationSettings().enabled);
+        }}
+        items={items}
+      />
     </div>
   );
 }

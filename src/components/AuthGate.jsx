@@ -1,15 +1,34 @@
 import { useState, useEffect } from 'react';
-import { onAuthChange, signInWithGoogle } from '../firebase';
+import {
+  onAuthChange,
+  signInWithGoogle,
+  checkRedirectResult,
+} from '../firebase';
 
 export default function AuthGate({ children }) {
   const [user, setUser] = useState(undefined);
   const [error, setError] = useState(null);
 
-  useEffect(() => onAuthChange(setUser), []);
+  useEffect(() => {
+    checkRedirectResult()
+      .then((res) => {
+        if (res && res.user) setUser(res.user);
+      })
+      .catch((e) => {
+        console.warn('Redirect auth result error:', e);
+      });
+    return onAuthChange(setUser);
+  }, []);
 
   const handleSignIn = () => {
     setError(null);
-    signInWithGoogle().catch((e) => setError(e.message));
+    signInWithGoogle().catch((e) => {
+      if (e.code === 'auth/popup-blocked') {
+        setError('POPUP_BLOCKED');
+      } else {
+        setError(e.message);
+      }
+    });
   };
 
   if (user === undefined) return (
@@ -41,7 +60,20 @@ export default function AuthGate({ children }) {
         </svg>
         <h1 className="auth__title">BRAINDUMP</h1>
         <p className="auth__subtitle">Personal Dumping System</p>
-        {error && <p className="auth__error">{error}</p>}
+
+        {error === 'POPUP_BLOCKED' ? (
+          <div className="auth__error" style={{ maxWidth: '300px', textAlign: 'left', lineHeight: 1.5 }}>
+            <strong style={{ display: 'block', marginBottom: '4px', textAlign: 'center' }}>
+              Pop-up was blocked!
+            </strong>
+            1. Click the site icon <strong>(=-)</strong> on the far left of the address bar.<br />
+            2. Set <strong>Pop-ups and redirects</strong> to <strong>Allow</strong>.<br />
+            3. Click the button below to sign in.
+          </div>
+        ) : (
+          error && <p className="auth__error">{error}</p>
+        )}
+
         <button className="auth__btn" onClick={handleSignIn}>
           Sign in with Google
         </button>

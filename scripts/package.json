@@ -1,0 +1,10 @@
+{
+  "name": "braindump-cron",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "firebase-admin": "^13.1.0",
+    "web-push": "^3.6.7"
+  }
+}
