@@ -5,8 +5,8 @@ on:
     branches:
       - dev
   schedule:
-    # Runs every 30 minutes
-    - cron: '*/30 * * * *'
+    # Runs at off-peak minutes (17, 47) to bypass heavy GitHub runner queue delays at :00 and :30
+    - cron: '17,47 * * * *'
   workflow_dispatch:
     inputs:
       mode:

@@ -115,9 +115,9 @@ function toWeekStr(monday) {
   return `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
 }
 
-// Match slots within cron interval window (±20 minutes tolerance for runner jitter)
-function isWithinSlot(totalMinutes, targetMins, tolerance = 20) {
-  return Math.abs(totalMinutes - targetMins) <= tolerance;
+// Check if current time has reached target time and is still within the valid daytime delivery window
+function isSlotDue(totalMinutes, minStartMins, maxEndMins) {
+  return totalMinutes >= minStartMins && totalMinutes < maxEndMins;
 }
 
 // ── 3. Main Cron Logic ────────────────────────────────────────────
@@ -177,13 +177,13 @@ async function runCron() {
     const currentWeekStr = toWeekStr(getWeekMonday(dateStr));
     const dayIndex = (new Date(`${dateStr}T00:00:00`).getDay() + 6) % 7; // Mon=0 .. Sun=6
 
-    // Slots definitions
+    // Slots definitions with delivery windows (guarantees alerts fire even if GitHub cron runs late)
     const slotsToEvaluate = [
       // 1. Pending Tasks
       {
         key: 'pending_morning',
         enabled: settings.pendingTasks !== false,
-        matches: isWithinSlot(totalMinutes, 8 * 60), // 08:00
+        matches: isSlotDue(totalMinutes, 8 * 60, 12 * 60), // 08:00 - 12:00
         action: async () => {
           const count = await getPendingTasksCount(dateStr, currentWeekStr, dayIndex);
           if (count <= 0) return null;
@@ -197,7 +197,7 @@ async function runCron() {
       {
         key: 'pending_afternoon',
         enabled: settings.pendingTasks !== false,
-        matches: isWithinSlot(totalMinutes, 12 * 60 + 30), // 12:30
+        matches: isSlotDue(totalMinutes, 12 * 60 + 30, 17 * 60), // 12:30 - 17:00
         action: async () => {
           const count = await getPendingTasksCount(dateStr, currentWeekStr, dayIndex);
           if (count <= 0) return null;
@@ -211,7 +211,7 @@ async function runCron() {
       {
         key: 'pending_evening',
         enabled: settings.pendingTasks !== false,
-        matches: isWithinSlot(totalMinutes, 17 * 60), // 17:00
+        matches: isSlotDue(totalMinutes, 17 * 60, 22 * 60), // 17:00 - 22:00
         action: async () => {
           const count = await getPendingTasksCount(dateStr, currentWeekStr, dayIndex);
           if (count <= 0) return null;
@@ -226,7 +226,7 @@ async function runCron() {
       {
         key: 'gentle_noon',
         enabled: settings.gentleReminders !== false,
-        matches: isWithinSlot(totalMinutes, 12 * 60), // 12:00
+        matches: isSlotDue(totalMinutes, 12 * 60, 17 * 60), // 12:00 - 17:00
         action: async () => ({
           title: 'BRAINDUMP',
           body: 'Brain heavy? Dump here. No guilt if ignore.',
@@ -236,7 +236,7 @@ async function runCron() {
       {
         key: 'gentle_evening',
         enabled: settings.gentleReminders !== false,
-        matches: isWithinSlot(totalMinutes, 18 * 60), // 18:00
+        matches: isSlotDue(totalMinutes, 18 * 60, 22 * 60 + 30), // 18:00 - 22:30
         action: async () => ({
           title: 'BRAINDUMP',
           body: 'Brain heavy? Dump here. No guilt if ignore.',
@@ -247,7 +247,7 @@ async function runCron() {
       {
         key: 'inactivity_check',
         enabled: settings.inactivity !== false,
-        matches: isWithinSlot(totalMinutes, 10 * 60), // 10:00
+        matches: isSlotDue(totalMinutes, 10 * 60, 22 * 60), // 10:00 - 22:00
         action: async () => {
           const inactiveDays = await getInactivityDays(dateStr);
           if (inactiveDays < 5) return null;
@@ -262,7 +262,7 @@ async function runCron() {
       {
         key: 'sunday_digest',
         enabled: settings.weeklyDigest !== false && dayOfWeek === 'Sun',
-        matches: isWithinSlot(totalMinutes, 9 * 60), // Sunday 09:00
+        matches: dayOfWeek === 'Sun' && isSlotDue(totalMinutes, 9 * 60, 22 * 60), // Sunday 09:00 - 22:00
         action: async () => {
           const stats = await getWeeklyStats(dateStr, currentWeekStr);
           return {
