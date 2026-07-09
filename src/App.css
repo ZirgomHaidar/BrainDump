@@ -68,7 +68,31 @@
 .app__header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
+}
+
+.app__notif-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: var(--border-width) solid var(--line-light);
+  color: var(--text-dim);
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.app__notif-btn:hover {
+  color: var(--text);
+  border-color: var(--line);
+  background: var(--hover-bg);
+}
+
+.app__notif-btn--active {
+  color: var(--color-success);
 }
 
 .app__signout {

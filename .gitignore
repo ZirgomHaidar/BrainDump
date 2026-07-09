@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+dev-dist
 dist-ssr
 *.local
 
@@ -23,3 +24,5 @@ dist-ssr
 *.sln
 *.sw?
 .env
+*service-account*.json
+scripts/node_modules

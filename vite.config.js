@@ -7,7 +7,11 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+      },
       workbox: {
+        importScripts: ['/sw-push-handler.js'],
         globPatterns: ['**/*.{js,css,html,svg,ico,woff2}'],
       },
       manifest: {

@@ -1,5 +1,13 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  signOut,
+  onAuthStateChanged,
+} from 'firebase/auth';
 import {
   initializeFirestore,
   persistentLocalCache,
@@ -38,8 +46,11 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
+export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
+export const checkRedirectResult = () => getRedirectResult(auth);
 export const signOutUser = () => signOut(auth);
 export const onAuthChange = (cb) => onAuthStateChanged(auth, cb);
+export const getAuthUser = () => auth.currentUser;
 
 const itemsRef = collection(db, 'items');
 
