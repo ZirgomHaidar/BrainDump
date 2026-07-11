@@ -18,7 +18,7 @@ import {
 } from '../services/pushSubscriptionService';
 import './NotificationSettings.css';
 
-export default function NotificationSettings({ isOpen, onClose, items = [] }) {
+export default function NotificationSettings({ isOpen, onClose, items = [], isGuest = false }) {
   const [permission, setPermission] = useState(getNotificationPermission);
   const [settings, setSettings] = useState(getNotificationSettings);
   const [feedback, setFeedback] = useState('');
@@ -213,19 +213,21 @@ export default function NotificationSettings({ isOpen, onClose, items = [] }) {
           <div className="notif-modal__row-info">
             <div className="notif-modal__row-label-group">
               <span className="notif-modal__row-label">Cloud Push (Closed Browser)</span>
-              <span className={`notif-modal__badge notif-modal__badge--${isPushActive ? 'granted' : 'default'}`}>
-                {isPushLoading ? 'SYNCING...' : isPushActive ? 'ACTIVE' : 'STANDBY'}
+              <span className={`notif-modal__badge notif-modal__badge--${isGuest ? 'default' : isPushActive ? 'granted' : 'default'}`}>
+                {isGuest ? 'REQUIRES SIGN-IN' : isPushLoading ? 'SYNCING...' : isPushActive ? 'ACTIVE' : 'STANDBY'}
               </span>
             </div>
             <div className="notif-modal__row-desc">
-              Receive alerts via GitHub Actions even when browser or tab is closed.
+              {isGuest
+                ? 'Server push via GitHub Actions requires signing in with Google to register cloud subscription.'
+                : 'Receive alerts via GitHub Actions even when browser or tab is closed.'}
             </div>
           </div>
           <label className="notif-modal__switch">
             <input
               type="checkbox"
-              checked={isPushActive}
-              disabled={!isGranted || isPushLoading}
+              checked={isPushActive && !isGuest}
+              disabled={isGuest || !isGranted || isPushLoading}
               onChange={handleToggleServerPush}
             />
             <span className="notif-modal__slider" />

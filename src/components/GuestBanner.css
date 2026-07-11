@@ -1,0 +1,181 @@
+.guest-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+  border: var(--border-width) solid var(--line);
+  margin: 12px 20px 0 20px;
+  padding: 12px 16px;
+}
+
+.guest-banner__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.guest-banner__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guest-banner__tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  background: var(--text);
+  color: var(--bg);
+  padding: 2px 6px;
+}
+
+.guest-banner__sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.guest-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.guest-banner__btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: transparent;
+  color: var(--text);
+  border: var(--border-width) solid var(--line);
+  padding: 5px 9px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.guest-banner__btn:hover {
+  background: var(--hover-bg);
+  border-color: var(--text);
+}
+
+.guest-banner__btn--dismiss {
+  padding: 5px 8px;
+  color: var(--text-dim);
+}
+
+.guest-banner__btn--dismiss:hover {
+  color: var(--text);
+}
+
+/* ── Tab Switcher / Chips ────────────────────────────────── */
+
+.guest-banner__tabs-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.guest-banner__tab-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: transparent;
+  color: var(--text-dim);
+  border: var(--border-width) solid var(--line-light);
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.guest-banner__tab-chip:hover {
+  color: var(--text);
+  border-color: var(--line);
+  background: var(--hover-bg);
+}
+
+.guest-banner__tab-chip--active {
+  color: var(--text);
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.guest-banner__tab-dot {
+  width: 5px;
+  height: 5px;
+  background: var(--text-dim);
+  transition: background 0.15s;
+}
+
+.guest-banner__tab-chip--active .guest-banner__tab-dot {
+  background: var(--color-success);
+}
+
+.guest-banner__tab-name {
+  font-weight: 700;
+}
+
+.guest-banner__tab-badge {
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.guest-banner__text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 820px;
+}
+
+.guest-banner__text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.guest-banner__text code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--bg);
+  border: var(--border-width) solid var(--line-light);
+  padding: 1px 4px;
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .guest-banner {
+    margin: 8px 12px 0 12px;
+    padding: 10px 12px;
+  }
+
+  .guest-banner__top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .guest-banner__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .guest-banner__tabs-nav {
+    gap: 4px;
+  }
+
+  .guest-banner__tab-chip {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+}

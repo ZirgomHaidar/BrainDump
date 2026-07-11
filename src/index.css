@@ -23,10 +23,10 @@
   --active-text:  #000000;
 
   /* Section accent colors */
-  --todos-accent:           #ffffff;
-  --decisions-accent:       #ffffff;
-  --ideas-accent:           #ffffff;
-  --letgo-accent:           #ffffff;
+  --todos-accent:           #a8bbdc;
+  --decisions-accent:       #c4abca;
+  --ideas-accent:           #b1e57e;
+  --letgo-accent:           #fbc9a9;
 
   --color-success:  #00ff00;
   --color-danger:   #ff3333;
@@ -161,6 +161,19 @@ input {
 .auth__btn:hover {
   background: var(--active-bg);
   color: var(--active-text);
+}
+
+.auth__btn--guest {
+  margin-top: 10px;
+  background: transparent;
+  color: var(--text-dim);
+  border-color: var(--line-light);
+}
+
+.auth__btn--guest:hover {
+  background: var(--hover-bg);
+  color: var(--text);
+  border-color: var(--line);
 }
 
 .auth__error {

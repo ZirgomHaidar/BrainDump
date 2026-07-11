@@ -25,20 +25,22 @@ function formatDay(dateStr) {
   };
 }
 
+function getWindowStart(selectedDate, activeDates) {
+  if (!activeDates || !activeDates.length) return 0;
+  const idx = activeDates.indexOf(selectedDate);
+  const target = idx === -1 ? activeDates.length - 1 : idx;
+  return Math.max(0, Math.min(target - WINDOW_SIZE + 1, activeDates.length - WINDOW_SIZE));
+}
+
 export default function DateStrip({ selectedDate, onChange, activeDates = [] }) {
-  const [windowStart, setWindowStart] = useState(0);
   const [prevSelectedDate, setPrevSelectedDate] = useState(selectedDate);
   const [prevActiveDates, setPrevActiveDates] = useState(activeDates);
+  const [windowStart, setWindowStart] = useState(() => getWindowStart(selectedDate, activeDates));
 
   if (selectedDate !== prevSelectedDate || activeDates !== prevActiveDates) {
     setPrevSelectedDate(selectedDate);
     setPrevActiveDates(activeDates);
-    if (activeDates.length) {
-      const idx = activeDates.indexOf(selectedDate);
-      const target = idx === -1 ? activeDates.length - 1 : idx;
-      const newStart = Math.max(0, Math.min(target - WINDOW_SIZE + 1, activeDates.length - WINDOW_SIZE));
-      setWindowStart(newStart);
-    }
+    setWindowStart(getWindowStart(selectedDate, activeDates));
   }
 
   useEffect(() => {

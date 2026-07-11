@@ -5,7 +5,8 @@ import {
   subscribeToActiveWeeks,
   subscribeToWeeklyItems,
   toggleWeeklyItem,
-} from '../firebase';
+} from '../services/storageAdapter';
+import { useAuth } from '../hooks/useAuth';
 import './WeeklyPlan.css';
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -65,6 +66,7 @@ function formatShortDate(dateStr) {
 }
 
 export default function WeeklyPlan() {
+  const { isGuest } = useAuth();
   const currentMonday = useMemo(() => getWeekMonday(new Date()), []);
   const upcomingWeeks = useMemo(() => {
     const weeks = [];
@@ -88,14 +90,14 @@ export default function WeeklyPlan() {
     return subscribeToActiveWeeks((weeks) => {
       const merged = Array.from(new Set([...weeks, ...upcomingWeeks])).sort();
       setActiveWeeks(merged);
-    });
-  }, [upcomingWeeks]);
+    }, isGuest);
+  }, [upcomingWeeks, isGuest]);
 
   const weekMonday = useMemo(() => getMondayFromWeekStr(selectedWeek), [selectedWeek]);
   const weekDays = useMemo(() => getWeekDays(weekMonday), [weekMonday]);
   const today = todayStr();
 
-  useEffect(() => subscribeToWeeklyItems(selectedWeek, setItems), [selectedWeek]);
+  useEffect(() => subscribeToWeeklyItems(selectedWeek, setItems, isGuest), [selectedWeek, isGuest]);
 
   useEffect(() => {
     if (addingDay !== null) inputRef.current?.focus();
@@ -149,7 +151,7 @@ export default function WeeklyPlan() {
       return;
     }
 
-    addWeeklyItem(selectedWeek, addingDay, text);
+    addWeeklyItem(selectedWeek, addingDay, text, isGuest);
     setInputText('');
     setAddingDay(null);
   }
@@ -217,7 +219,7 @@ export default function WeeklyPlan() {
                   <li key={item.id} className={`weekly__task${item.done ? ' weekly__task--done' : ''}`}>
                     <button
                       className={`weekly__task-check${item.done ? ' weekly__task-check--done' : ''}`}
-                      onClick={() => toggleWeeklyItem(item.id, !item.done)}
+                      onClick={() => toggleWeeklyItem(item.id, !item.done, isGuest)}
                       aria-label="Toggle task"
                     >
                       {item.done ? '■' : '□'}
@@ -226,7 +228,7 @@ export default function WeeklyPlan() {
                     {!isPast && (
                       <button
                         className="weekly__task-delete"
-                        onClick={() => deleteWeeklyItem(item.id)}
+                        onClick={() => deleteWeeklyItem(item.id, isGuest)}
                         aria-label="Delete task"
                       >
                         ×

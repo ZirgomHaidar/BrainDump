@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates, signOutUser } from './firebase';
+import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates } from './services/storageAdapter';
+import { useAuth } from './hooks/useAuth';
+import { isBannerDismissed } from './services/guestStorage';
 import Section from './components/Section';
 import DateStrip from './components/DateStrip';
 import FloatingInput from './components/FloatingInput';
 import WeeklyPlan from './components/WeeklyPlan';
 import Motivation from './components/Motivation';
 import NotificationSettings from './components/NotificationSettings';
+import GuestBanner from './components/GuestBanner';
+import MigrationModal from './components/MigrationModal';
 import { useNotificationScheduler } from './hooks/useNotificationScheduler';
 import { getNotificationSettings } from './services/notificationService';
 import './App.css';
@@ -26,15 +30,17 @@ const toLocalDateStr = (d) => {
 const todayStr = () => toLocalDateStr(new Date());
 
 export default function App() {
+  const { isGuest, showMigration, setShowMigration, signIn, signOut, exitGuest } = useAuth();
   const [activeTab, setActiveTab] = useState('weekly');
   const [items, setItems]   = useState([]);
-  const [syncing, setSyncing] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [error, setError]   = useState(null);
   const [selectedDate, setSelectedDate] = useState(todayStr);
   const [activeDates, setActiveDates] = useState(() => [todayStr()]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState(() => getNotificationSettings().enabled);
+  const [bannerDismissed, setBannerDismissed] = useState(() => isBannerDismissed());
   const topBarRef = useRef(null);
 
   useNotificationScheduler(activeDates);
@@ -70,7 +76,7 @@ export default function App() {
 
   const handleDateChange = (date) => {
     if (date !== selectedDate) {
-      setSyncing(true);
+      if (!isGuest) setSyncing(true);
       setSelectedDate(date);
     }
   };
@@ -80,21 +86,21 @@ export default function App() {
     return subscribeToActiveDates((dates) => {
       const merged = Array.from(new Set([...dates, today])).sort();
       setActiveDates(merged);
-    });
-  }, []);
+    }, isGuest);
+  }, [isGuest]);
 
   useEffect(() => {
     const unsubscribe = subscribeToItems(selectedDate, (allItems) => {
       setItems(allItems);
       setSyncing(false);
-    });
+    }, isGuest);
     return unsubscribe;
-  }, [selectedDate]);
+  }, [selectedDate, isGuest]);
 
-  const handleAdd    = (section, text) => addItem(section, text, selectedDate).catch(e => setError(e.message));
-  const handleDelete = (id)            => deleteItem(id).catch(e => setError(e.message));
-  const handleToggle = (id, field, v)  => updateItem(id, { [field]: v }).catch(e => setError(e.message));
-  const handleEdit   = (id, text)      => updateItem(id, { text }).catch(e => setError(e.message));
+  const handleAdd    = (section, text) => addItem(section, text, selectedDate, isGuest).catch(e => setError(e.message));
+  const handleDelete = (id)            => deleteItem(id, isGuest).catch(e => setError(e.message));
+  const handleToggle = (id, field, v)  => updateItem(id, { [field]: v }, isGuest).catch(e => setError(e.message));
+  const handleEdit   = (id, text)      => updateItem(id, { text }, isGuest).catch(e => setError(e.message));
 
   const itemsBySection = key => items.filter(i => i.section === key);
 
@@ -127,16 +133,36 @@ export default function App() {
                 <path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
             </button>
-            <div className="app__sync-indicator">
-              <span
-                className={`app__sync-dot${syncing ? ' app__sync-dot--loading' : ' app__sync-dot--live'}`}
-                title={syncing ? 'Connecting...' : 'Live sync active'}
-              />
-              <span className="app__sync-label">{syncing ? 'Connecting...' : 'Live'}</span>
-            </div>
-            <button className="app__signout" onClick={signOutUser} title="Sign out">
-              Sign out
-            </button>
+
+            {isGuest ? (
+              <>
+                <div className="app__guest-indicator" title="Operating offline — saved locally in browser">
+                  <span className="app__guest-dot" />
+                  <span className="app__guest-label">Guest</span>
+                </div>
+                <div className="app__guest-actions">
+                  <button className="app__signin-btn" onClick={signIn} title="Sign in with Google to cloud sync">
+                    Sign In
+                  </button>
+                  <button className="app__exit-guest" onClick={exitGuest} title="Exit Guest Mode">
+                    Exit
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="app__sync-indicator">
+                  <span
+                    className={`app__sync-dot${syncing ? ' app__sync-dot--loading' : ' app__sync-dot--live'}`}
+                    title={syncing ? 'Connecting...' : 'Live sync active'}
+                  />
+                  <span className="app__sync-label">{syncing ? 'Connecting...' : 'Live'}</span>
+                </div>
+                <button className="app__signout" onClick={signOut} title="Sign out">
+                  Sign out
+                </button>
+              </>
+            )}
           </div>
         </header>
 
@@ -165,6 +191,14 @@ export default function App() {
           <DateStrip selectedDate={selectedDate} onChange={handleDateChange} activeDates={activeDates} />
         )}
       </div>
+
+      {isGuest && !bannerDismissed && (
+        <GuestBanner
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          onDismiss={() => setBannerDismissed(true)}
+        />
+      )}
 
       {!isOnline && (
         <div className="app__offline-banner">
@@ -210,6 +244,13 @@ export default function App() {
           setNotifEnabled(getNotificationSettings().enabled);
         }}
         items={items}
+        isGuest={isGuest}
+      />
+
+      <MigrationModal
+        isOpen={showMigration}
+        onClose={() => setShowMigration(false)}
+        onComplete={() => setShowMigration(false)}
       />
     </div>
   );

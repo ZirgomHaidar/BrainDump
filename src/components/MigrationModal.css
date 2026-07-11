@@ -1,0 +1,110 @@
+.migration-modal {
+  background: var(--surface);
+  border: var(--border-width) solid var(--line);
+  padding: 24px;
+  max-width: 440px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.migration-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: var(--border-width) solid var(--line);
+  padding-bottom: 12px;
+}
+
+.migration-modal__title {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--text);
+}
+
+.migration-modal__tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  background: var(--text);
+  color: var(--bg);
+  padding: 2px 6px;
+  letter-spacing: 0.1em;
+}
+
+.migration-modal__body {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.migration-modal__error {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-danger);
+  border: var(--border-width) solid var(--color-danger);
+  padding: 6px 10px;
+}
+
+.migration-modal__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.migration-modal__btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.migration-modal__btn--secondary {
+  background: transparent;
+  color: var(--text-dim);
+  border: var(--border-width) solid var(--line-light);
+}
+
+.migration-modal__btn--secondary:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.migration-modal__btn--primary {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border: var(--border-width) solid var(--line);
+}
+
+.migration-modal__btn--primary:hover:not(:disabled) {
+  background: var(--hover-bg);
+  color: var(--text);
+}
+
+.migration-modal__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .migration-modal__actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .migration-modal__btn {
+    width: 100%;
+    text-align: center;
+  }
+}

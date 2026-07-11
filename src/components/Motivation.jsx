@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { addReflection, deleteReflection, subscribeToReflections } from '../firebase';
+import { addReflection, deleteReflection, subscribeToReflections } from '../services/storageAdapter';
+import { useAuth } from '../hooks/useAuth';
 import './Motivation.css';
 
 const CATEGORIES = ['lesson', 'experience', 'motivation', 'principle'];
@@ -11,17 +12,18 @@ function formatDate(ts) {
 }
 
 export default function Motivation() {
+  const { isGuest } = useAuth();
   const [reflections, setReflections] = useState([]);
   const [inputText, setInputText] = useState('');
   const [inputCategory, setInputCategory] = useState('');
 
-  useEffect(() => subscribeToReflections(setReflections), []);
+  useEffect(() => subscribeToReflections(setReflections, isGuest), [isGuest]);
 
   function handleSubmit(e) {
     e.preventDefault();
     const text = inputText.trim();
     if (!text) return;
-    addReflection(text, inputCategory || null);
+    addReflection(text, inputCategory || null, isGuest);
     setInputText('');
     setInputCategory('');
   }
@@ -63,7 +65,7 @@ export default function Motivation() {
                 <span className="motivation__meta">{formatDate(r.createdAt)}</span>
                 <button
                   className="motivation__delete"
-                  onClick={() => deleteReflection(r.id)}
+                  onClick={() => deleteReflection(r.id, isGuest)}
                   aria-label="Delete reflection"
                 >
                   Delete

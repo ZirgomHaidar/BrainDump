@@ -1,34 +1,24 @@
-import { useState, useEffect } from 'react';
-import {
-  onAuthChange,
-  signInWithGoogle,
-  checkRedirectResult,
-} from '../firebase';
+import { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 export default function AuthGate({ children }) {
-  const [user, setUser] = useState(undefined);
+  const { user, isGuest, signIn, enterGuest } = useAuth();
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    checkRedirectResult()
-      .then((res) => {
-        if (res && res.user) setUser(res.user);
-      })
-      .catch((e) => {
-        console.warn('Redirect auth result error:', e);
-      });
-    return onAuthChange(setUser);
-  }, []);
 
   const handleSignIn = () => {
     setError(null);
-    signInWithGoogle().catch((e) => {
+    signIn().catch((e) => {
       if (e.code === 'auth/popup-blocked') {
         setError('POPUP_BLOCKED');
       } else {
         setError(e.message);
       }
     });
+  };
+
+  const handleEnterGuest = () => {
+    setError(null);
+    enterGuest();
   };
 
   if (user === undefined) return (
@@ -48,7 +38,7 @@ export default function AuthGate({ children }) {
     </div>
   );
 
-  if (!user) return (
+  if (!user && !isGuest) return (
     <div className="auth">
       <div className="auth__card">
         <svg className="auth__logo" viewBox="0 0 32 32" fill="none" strokeWidth="1.5" stroke="currentColor">
@@ -76,6 +66,10 @@ export default function AuthGate({ children }) {
 
         <button className="auth__btn" onClick={handleSignIn}>
           Sign in with Google
+        </button>
+
+        <button className="auth__btn auth__btn--guest" onClick={handleEnterGuest}>
+          Try as Guest (Local Storage)
         </button>
       </div>
     </div>
