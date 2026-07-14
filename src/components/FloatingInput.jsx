@@ -80,42 +80,13 @@ export default function FloatingInput({ onAdd }) {
 
     const timer = setTimeout(() => {
       window.addEventListener('click', handleOutsideClick);
-    }, 10);
+    }, 50);
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener('click', handleOutsideClick);
     };
   }, [isExpanded, isCollapsing, handleCollapse]);
-
-  // Auto-collapse when scrolling down if input is empty
-  useEffect(() => {
-    if (!isExpanded || isCollapsing) return;
-
-    let lastScrollY = window.scrollY;
-    let ticking = false;
-
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-          const delta = currentScrollY - lastScrollY;
-
-          // If scrolled down and input has no text, collapse back to circle
-          if (!value.trim() && delta > 12 && currentScrollY > 40) {
-            handleCollapse();
-          }
-
-          lastScrollY = currentScrollY;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [isExpanded, isCollapsing, value, handleCollapse]);
 
   // Derive inline section tag from typed command or fallback to active selected quadrant
   const parsed = parse(value);
@@ -196,7 +167,10 @@ export default function FloatingInput({ onAdd }) {
         <button
           type="button"
           className="floating-input__fab"
-          onClick={() => setIsExpanded(true)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
           onMouseEnter={() => setIsExpanded(true)}
           title={`Add item (${currentQuadrant.label}) — press /`}
           aria-label="Add new item"
@@ -218,6 +192,7 @@ export default function FloatingInput({ onAdd }) {
       ) : (
         <div
           className={`floating-input__card${isCollapsing ? ' floating-input__card--collapsing' : ' floating-input__card--expanding'}`}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Four Quadrant Toggle Buttons */}
           <div className="floating-input__quadrants" role="tablist" aria-label="Select Quadrant">
