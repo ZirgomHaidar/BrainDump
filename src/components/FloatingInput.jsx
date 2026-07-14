@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 const QUADRANTS = [
   { key: 'todos',     label: 'TODO',      color: '#a8bbdc' },
@@ -32,19 +32,90 @@ export default function FloatingInput({ onAdd }) {
   const [value, setValue]   = useState('');
   const [error, setError]   = useState('');
   const [flash, setFlash]   = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isCollapsing, setIsCollapsing] = useState(false);
   const inputRef = useRef(null);
+  const containerRef = useRef(null);
 
-  // Keyboard shortcut: '/' focuses the input when nothing else is focused
+  const handleCollapse = useCallback(() => {
+    if (isCollapsing || !isExpanded) return;
+    setIsCollapsing(true);
+    setTimeout(() => {
+      setIsExpanded(false);
+      setIsCollapsing(false);
+    }, 200);
+  }, [isCollapsing, isExpanded]);
+
+  // Keyboard shortcut: '/' expands & focuses the input
   useEffect(() => {
     const handler = (e) => {
       if (e.key === '/' && document.activeElement === document.body) {
         e.preventDefault();
-        inputRef.current?.focus();
+        setIsExpanded(true);
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, []);
+
+  // Auto-focus input when expanded
+  useEffect(() => {
+    if (isExpanded && !isCollapsing) {
+      const t = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(t);
+    }
+  }, [isExpanded, isCollapsing]);
+
+  // Click outside listener to collapse back into circle
+  useEffect(() => {
+    if (!isExpanded || isCollapsing) return;
+
+    const handleOutsideClick = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        handleCollapse();
+      }
+    };
+
+    const timer = setTimeout(() => {
+      window.addEventListener('click', handleOutsideClick);
+    }, 10);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('click', handleOutsideClick);
+    };
+  }, [isExpanded, isCollapsing, handleCollapse]);
+
+  // Auto-collapse when scrolling down if input is empty
+  useEffect(() => {
+    if (!isExpanded || isCollapsing) return;
+
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          const delta = currentScrollY - lastScrollY;
+
+          // If scrolled down and input has no text, collapse back to circle
+          if (!value.trim() && delta > 12 && currentScrollY > 40) {
+            handleCollapse();
+          }
+
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isExpanded, isCollapsing, value, handleCollapse]);
 
   // Derive inline section tag from typed command or fallback to active selected quadrant
   const parsed = parse(value);
@@ -79,6 +150,9 @@ export default function FloatingInput({ onAdd }) {
     setError('');
     setFlash(HINTS[targetSection]);
     setTimeout(() => setFlash(''), 1500);
+
+    // Keep expanded and re-focus input for next entry
+    inputRef.current?.focus();
   }
 
   function handleKeyDown(e) {
@@ -89,7 +163,7 @@ export default function FloatingInput({ onAdd }) {
     if (e.key === 'Escape') {
       setValue('');
       setError('');
-      inputRef.current?.blur();
+      handleCollapse();
     }
   }
 
@@ -100,7 +174,6 @@ export default function FloatingInput({ onAdd }) {
 
   function handleSelectQuadrant(key) {
     setSelectedQuadrant(key);
-    // If input had another slash command, extract and keep the text
     if (parsed) {
       setValue(parsed.text);
     }
@@ -108,73 +181,123 @@ export default function FloatingInput({ onAdd }) {
     inputRef.current?.focus();
   }
 
+  const isOpen = isExpanded || isCollapsing;
+
   return (
-    <div className="floating-input">
+    <div
+      ref={containerRef}
+      className={`floating-input${isOpen ? ' floating-input--expanded' : ' floating-input--collapsed'}`}
+      style={{ '--q-color': currentQuadrant.color }}
+    >
       {flash && <div className="floating-input__flash">Added to {flash}</div>}
       {error && <div className="floating-input__error">{error}</div>}
 
-      <div className="floating-input__card">
-        {/* Four Quadrant Toggle Buttons */}
-        <div className="floating-input__quadrants" role="tablist" aria-label="Select Quadrant">
-          {QUADRANTS.map((q) => {
-            const isSelected = activeSection === q.key;
-            return (
-              <button
-                key={q.key}
-                type="button"
-                className={`floating-input__quadrant-btn${isSelected ? ' floating-input__quadrant-btn--active' : ''}`}
-                style={{
-                  '--q-color': q.color,
-                }}
-                onClick={() => handleSelectQuadrant(q.key)}
-                aria-selected={isSelected}
-                title={`Switch to ${q.label} (or /${q.key[0]})`}
-              >
-                <span className="floating-input__quadrant-dot" />
-                <span className="floating-input__quadrant-label">{q.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      {!isOpen ? (
+        <button
+          type="button"
+          className="floating-input__fab"
+          onClick={() => setIsExpanded(true)}
+          onMouseEnter={() => setIsExpanded(true)}
+          title={`Add item (${currentQuadrant.label}) — press /`}
+          aria-label="Add new item"
+        >
+          <svg
+            className="floating-input__fab-icon"
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <line x1="9" y1="3" x2="9" y2="15" />
+            <line x1="3" y1="9" x2="15" y2="9" />
+          </svg>
+        </button>
+      ) : (
+        <div
+          className={`floating-input__card${isCollapsing ? ' floating-input__card--collapsing' : ' floating-input__card--expanding'}`}
+        >
+          {/* Four Quadrant Toggle Buttons */}
+          <div className="floating-input__quadrants" role="tablist" aria-label="Select Quadrant">
+            {QUADRANTS.map((q) => {
+              const isSelected = activeSection === q.key;
+              return (
+                <button
+                  key={q.key}
+                  type="button"
+                  className={`floating-input__quadrant-btn${isSelected ? ' floating-input__quadrant-btn--active' : ''}`}
+                  style={{
+                    '--q-color': q.color,
+                  }}
+                  onClick={() => handleSelectQuadrant(q.key)}
+                  aria-selected={isSelected}
+                  title={`Switch to ${q.label} (or /${q.key[0]})`}
+                >
+                  <span className="floating-input__quadrant-dot" />
+                  <span className="floating-input__quadrant-label">{q.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Input Bar */}
-        <div className="floating-input__bar">
-          <span
-            className="floating-input__tag"
-            style={{
-              backgroundColor: currentQuadrant.color,
-              borderColor: currentQuadrant.color,
-              color: '#050505',
-            }}
-          >
-            {HINTS[activeSection]}
-          </span>
-          <input
-            ref={inputRef}
-            className="floating-input__input"
-            type="text"
-            placeholder={`Add to ${HINTS[activeSection]}...`}
-            value={value}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            spellCheck={false}
-            autoComplete="off"
-          />
-          <button
-            className="floating-input__submit"
-            onClick={handleSubmit}
-            aria-label={`Add item to ${HINTS[activeSection]}`}
-            style={{
-              '--submit-color': currentQuadrant.color,
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <line x1="7" y1="1" x2="7" y2="13" />
-              <line x1="1" y1="7" x2="13" y2="7" />
-            </svg>
-          </button>
+          {/* Input Bar */}
+          <div className="floating-input__bar">
+            <span
+              className="floating-input__tag"
+              style={{
+                backgroundColor: currentQuadrant.color,
+                borderColor: currentQuadrant.color,
+                color: '#050505',
+              }}
+            >
+              {HINTS[activeSection]}
+            </span>
+            <input
+              ref={inputRef}
+              className="floating-input__input"
+              type="text"
+              placeholder={`Add to ${HINTS[activeSection]}...`}
+              value={value}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              spellCheck={false}
+              autoComplete="off"
+            />
+            <button
+              className="floating-input__submit"
+              onClick={handleSubmit}
+              aria-label={`Add item to ${HINTS[activeSection]}`}
+              style={{
+                '--submit-color': currentQuadrant.color,
+              }}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              >
+                <line x1="7" y1="1" x2="7" y2="13" />
+                <line x1="1" y1="7" x2="13" y2="7" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="floating-input__collapse-btn"
+              onClick={handleCollapse}
+              title="Collapse (ESC)"
+              aria-label="Collapse input bar"
+            >
+              ✕
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

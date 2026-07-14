@@ -71,6 +71,40 @@
   gap: 14px;
 }
 
+.app__hud-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: var(--border-width) solid var(--line-light);
+  color: var(--text-dim);
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.app__hud-matrix {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.app__hud-btn:hover {
+  color: var(--ideas-accent, #b1e57e);
+  border-color: var(--ideas-accent, #b1e57e);
+  background: rgba(177, 229, 126, 0.08);
+}
+
+.app__hud-btn--active {
+  color: #050505;
+  background: var(--ideas-accent, #b1e57e);
+  border-color: var(--ideas-accent, #b1e57e);
+}
+
 .app__notif-btn {
   display: flex;
   align-items: center;
@@ -210,6 +244,87 @@
 .app__exit-guest:hover {
   color: var(--text);
   border-color: var(--line);
+}
+
+@media (max-width: 600px) {
+  .app__header {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .app__title {
+    font-size: 16px;
+    gap: 8px;
+    min-width: 0;
+    flex-shrink: 1;
+    white-space: nowrap;
+  }
+
+  .app__logo {
+    width: 22px;
+    height: 22px;
+  }
+
+  .app__title-dim {
+    display: none;
+  }
+
+  .app__header-right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .app__hud-btn,
+  .app__notif-btn {
+    width: 24px;
+    height: 24px;
+  }
+
+  .app__hud-matrix {
+    font-size: 11px;
+  }
+
+  .app__sync-indicator {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .app__sync-label {
+    display: none;
+  }
+
+  .app__sync-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .app__signout,
+  .app__signin-btn,
+  .app__exit-guest {
+    padding: 3px 6px;
+    font-size: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .app__guest-indicator {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .app__guest-label {
+    display: none;
+  }
+
+  .app__guest-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .app__guest-actions {
+    gap: 4px;
+  }
 }
 
 /* ── Tab Nav ───────────────────────────────────────────── */
@@ -644,7 +759,7 @@
 
 .floating-input {
   position: fixed;
-  bottom: 28px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -652,7 +767,121 @@
   align-items: center;
   gap: 6px;
   z-index: 100;
+}
+
+.floating-input--collapsed {
+  width: auto;
+}
+
+.floating-input--expanded {
   width: clamp(300px, 52vw, 540px);
+}
+
+.floating-input__card--expanding {
+  animation: fabCardExpand 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: bottom center;
+}
+
+.floating-input__card--collapsing {
+  animation: fabCardCollapse 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: bottom center;
+  pointer-events: none;
+}
+
+@keyframes fabCardExpand {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fabCardCollapse {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* ── Circular FAB (Collapsed) ──────────────────────────── */
+
+.floating-input__fab {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(5, 5, 5, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid var(--q-color);
+  color: var(--q-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 0, 0, 0.5);
+  opacity: 0.7;
+  animation: fabBtnIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s, opacity 0.2s ease, box-shadow 0.2s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes fabBtnIn {
+  from {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+  to {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+}
+
+.floating-input__fab:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background: rgba(5, 5, 5, 0.9);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.85), 0 0 14px var(--q-color);
+}
+
+.floating-input__fab:active {
+  transform: scale(0.94);
+}
+
+.floating-input__fab-icon {
+  transition: transform 0.22s ease;
+}
+
+.floating-input__fab:hover .floating-input__fab-icon {
+  transform: rotate(90deg);
+}
+
+.floating-input__collapse-btn {
+  width: 32px;
+  flex-shrink: 0;
+  border: none;
+  border-left: var(--border-width) solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  transition: all 0.15s;
+}
+
+.floating-input__collapse-btn:hover {
+  background: var(--hover-bg);
+  color: var(--text);
 }
 
 .floating-input__card {
@@ -805,9 +1034,24 @@
 }
 
 @media (max-width: 600px) {
-  .floating-input {
+  .floating-input--expanded {
     width: calc(100vw - 20px);
     bottom: 16px;
+  }
+
+  .floating-input--collapsed {
+    bottom: 20px;
+    width: auto;
+  }
+
+  .floating-input__fab {
+    width: 48px;
+    height: 48px;
+  }
+
+  .floating-input__collapse-btn {
+    width: 36px;
+    font-size: 12px;
   }
 
   .floating-input__quadrant-btn {

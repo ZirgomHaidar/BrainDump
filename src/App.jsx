@@ -10,6 +10,7 @@ import Motivation from './components/Motivation';
 import NotificationSettings from './components/NotificationSettings';
 import GuestBanner from './components/GuestBanner';
 import MigrationModal from './components/MigrationModal';
+import DashboardHUD from './components/DashboardHUD';
 import { useNotificationScheduler } from './hooks/useNotificationScheduler';
 import { getNotificationSettings } from './services/notificationService';
 import './App.css';
@@ -39,6 +40,7 @@ export default function App() {
   const [activeDates, setActiveDates] = useState(() => [todayStr()]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState(() => getNotificationSettings().enabled);
   const [bannerDismissed, setBannerDismissed] = useState(() => isBannerDismissed());
   const topBarRef = useRef(null);
@@ -122,6 +124,20 @@ export default function App() {
             </div>
           </h1>
           <div className="app__header-right">
+            <button
+              className={`app__hud-btn${isDashboardOpen ? ' app__hud-btn--active' : ''}`}
+              onClick={() => setIsDashboardOpen(prev => !prev)}
+              title="Dashboard Overview"
+              aria-label="Dashboard Overview"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="9" />
+                <rect x="14" y="3" width="7" height="5" />
+                <rect x="14" y="12" width="7" height="9" />
+                <rect x="3" y="16" width="7" height="5" />
+              </svg>
+            </button>
+
             <button
               className={`app__notif-btn${notifEnabled ? ' app__notif-btn--active' : ''}`}
               onClick={() => setIsNotifOpen(true)}
@@ -245,6 +261,14 @@ export default function App() {
         }}
         items={items}
         isGuest={isGuest}
+      />
+
+      <DashboardHUD
+        isOpen={isDashboardOpen}
+        onClose={() => setIsDashboardOpen(false)}
+        isGuest={isGuest}
+        activeDates={activeDates}
+        syncing={syncing}
       />
 
       <MigrationModal

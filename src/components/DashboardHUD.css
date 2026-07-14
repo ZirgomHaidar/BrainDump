@@ -1,0 +1,554 @@
+/* ── Dashboard HUD Slide-out Drawer ─────────────────────────── */
+
+.dashboard-hud {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  animation: hudFadeIn 0.2s ease forwards;
+}
+
+@keyframes hudFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dashboard-hud__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.dashboard-hud__panel {
+  position: relative;
+  width: clamp(340px, 48vw, 680px);
+  height: 100%;
+  background: var(--bg, #050505);
+  border-left: var(--border-width) solid var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.8);
+  animation: hudSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes hudSlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* ── Closing Animation ───────────────────────────────────────── */
+
+.dashboard-hud--closing {
+  pointer-events: none;
+}
+
+.dashboard-hud--closing .dashboard-hud__backdrop {
+  animation: hudFadeOut 0.24s ease forwards;
+}
+
+.dashboard-hud--closing .dashboard-hud__panel {
+  animation: hudSlideOut 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes hudFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes hudSlideOut {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+/* ── HUD Header ─────────────────────────────────────────────── */
+
+.dashboard-hud__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: var(--border-width) solid var(--line);
+  background: var(--bg, #050505);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dashboard-hud__header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-hud__dashboard-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ideas-accent, #b1e57e);
+}
+
+.dashboard-hud__header-title h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text, #ffffff);
+}
+
+.dashboard-hud__badge {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border: var(--border-width) solid var(--line-light);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dashboard-hud__close-btn {
+  background: transparent;
+  border: var(--border-width) solid var(--line-light);
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dashboard-hud__close-btn:hover {
+  background: var(--hover-bg);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+/* ── Top Status Ticker Strip ─────────────────────────────────── */
+
+.dashboard-hud__ticker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: var(--border-width) solid var(--line-light);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.dashboard-hud__ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dashboard-hud__ticker-label {
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.dashboard-hud__ticker-val {
+  color: var(--text);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dashboard-hud__ticker-val.highlight {
+  color: var(--ideas-accent, #b1e57e);
+}
+
+.dashboard-hud__ticker-divider {
+  color: var(--line-light);
+}
+
+.dashboard-hud__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dashboard-hud__status-dot--live {
+  background: var(--ideas-accent, #b1e57e);
+  box-shadow: 0 0 6px var(--ideas-accent, #b1e57e);
+}
+
+.dashboard-hud__status-dot--guest {
+  background: var(--decisions-accent, #c4abca);
+}
+
+.dashboard-hud__status-dot--syncing {
+  background: var(--todos-accent, #a8bbdc);
+  animation: pulseSync 1s infinite alternate;
+}
+
+@keyframes pulseSync {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+
+/* ── Bento Grid ──────────────────────────────────────────────── */
+
+.dashboard-hud__bento {
+  padding: 16px 20px 32px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.dashboard-hud__card {
+  background: var(--bg, #050505);
+  border: var(--border-width) solid var(--line-light);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: border-color 0.2s;
+}
+
+.dashboard-hud__card:hover {
+  border-color: var(--line);
+}
+
+.dashboard-hud__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.dashboard-hud__card-tag {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.dashboard-hud__card-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+/* ── Card 1: Today's Focus ───────────────────────────────────── */
+
+.dashboard-hud__metric-display {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.dashboard-hud__metric-number {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+}
+
+.dashboard-hud__metric-denom {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.dashboard-hud__progress-track {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: var(--border-width) solid var(--line-light);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.dashboard-hud__progress-fill {
+  height: 100%;
+  background: var(--todos-accent, #a8bbdc);
+  transition: width 0.4s ease;
+}
+
+.dashboard-hud__substats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  border-top: var(--border-width) solid rgba(255, 255, 255, 0.06);
+  padding-top: 8px;
+}
+
+.dashboard-hud__substat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dashboard-hud__substat-lbl {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.dashboard-hud__substat-val {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Card 2: Mind Clearance Circular Gauge ───────────────────── */
+
+.dashboard-hud__gauge-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 110px;
+  margin: 4px 0;
+}
+
+.dashboard-hud__gauge-svg {
+  width: 106px;
+  height: 106px;
+  transform: rotate(-90deg);
+}
+
+.dashboard-hud__gauge-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 7;
+}
+
+.dashboard-hud__gauge-val {
+  fill: none;
+  stroke: var(--ideas-accent, #b1e57e);
+  stroke-width: 7;
+  stroke-linecap: square;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-hud__gauge-content {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-hud__gauge-pct {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.dashboard-hud__gauge-pct span {
+  font-size: 12px;
+  color: var(--ideas-accent, #b1e57e);
+  margin-left: 1px;
+}
+
+.dashboard-hud__gauge-label {
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+/* ── Card 3: 7-Day Activity Volume (Bar Chart) ─────────────────── */
+
+.dashboard-hud__card--activity {
+  grid-column: 1 / -1;
+  min-height: 150px;
+}
+
+.dashboard-hud__barchart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 90px;
+  padding: 6px 0 0;
+}
+
+.dashboard-hud__bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.dashboard-hud__bar-track {
+  flex: 1;
+  width: 100%;
+  max-width: 32px;
+  background: rgba(255, 255, 255, 0.03);
+  border: var(--border-width) solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  transition: border-color 0.15s;
+}
+
+.dashboard-hud__bar-col:hover .dashboard-hud__bar-track {
+  border-color: var(--line);
+}
+
+.dashboard-hud__bar-fill {
+  width: 100%;
+  background: var(--text-dim);
+  transition: height 0.4s ease, background 0.15s;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+.dashboard-hud__bar-col--today .dashboard-hud__bar-fill {
+  background: var(--todos-accent, #a8bbdc);
+}
+
+.dashboard-hud__bar-col:hover .dashboard-hud__bar-fill {
+  background: var(--active-bg);
+}
+
+.dashboard-hud__bar-val {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  color: #050505;
+  margin-top: 2px;
+}
+
+.dashboard-hud__bar-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+.dashboard-hud__bar-col--today .dashboard-hud__bar-label {
+  color: var(--todos-accent, #a8bbdc);
+}
+
+.dashboard-hud__bar-sub {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+.dashboard-hud__card--quadrants {
+  grid-column: 1 / -1;
+}
+
+.dashboard-hud__quadrant-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 20px;
+  margin-top: 4px;
+}
+
+@media (max-width: 520px) {
+  .dashboard-hud__quadrant-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.dashboard-hud__quadrant-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard-hud__quadrant-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard-hud__quadrant-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.dashboard-hud__quadrant-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  margin-right: auto;
+}
+
+.dashboard-hud__quadrant-count {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.dashboard-hud__quadrant-bar-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: var(--border-width) solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.dashboard-hud__quadrant-bar-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+/* ── Mobile Responsive ───────────────────────────────────────── */
+
+@media (max-width: 650px) {
+  .dashboard-hud__panel {
+    width: 100vw;
+    border-left: none;
+  }
+
+  .dashboard-hud__bento {
+    grid-template-columns: 1fr;
+    padding: 12px 14px 28px;
+    gap: 12px;
+  }
+
+  .dashboard-hud__card--activity,
+  .dashboard-hud__card--quadrants {
+    grid-column: auto;
+  }
+
+  .dashboard-hud__ticker {
+    padding: 8px 14px;
+    font-size: 8.5px;
+    gap: 8px;
+  }
+}
