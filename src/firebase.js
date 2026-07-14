@@ -153,3 +153,16 @@ export function subscribeToItems(date, callback) {
     callback(items);
   });
 }
+
+export function subscribeToRecentItems(dates, callback) {
+  if (!dates || dates.length === 0) {
+    callback([]);
+    return () => {};
+  }
+  const q = query(itemsRef, where('date', 'in', dates));
+  return onSnapshot(q, (snapshot) => {
+    const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    callback(items);
+  });
+}
+

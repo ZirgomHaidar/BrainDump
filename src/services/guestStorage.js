@@ -287,6 +287,18 @@ export function guestSubscribeToItems(date, callback) {
   return () => listeners.items.delete(run);
 }
 
+export function guestSubscribeToRecentItems(dates, callback) {
+  const dateSet = new Set(dates);
+  const run = () => {
+    const all = getRaw(GUEST_ITEMS_KEY, []);
+    const matching = all.filter((i) => dateSet.has(i.date));
+    callback(matching);
+  };
+  run();
+  listeners.items.add(run);
+  return () => listeners.items.delete(run);
+}
+
 export function guestSubscribeToActiveDates(callback) {
   const run = () => {
     const all = getRaw(GUEST_ITEMS_KEY, []);

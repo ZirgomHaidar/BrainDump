@@ -34,6 +34,13 @@ export function subscribeToItems(date, callback, isGuest) {
   return fb.subscribeToItems(date, callback);
 }
 
+export function subscribeToRecentItems(dates, callback, isGuest) {
+  if (isGuest) {
+    return guest.guestSubscribeToRecentItems(dates, callback);
+  }
+  return fb.subscribeToRecentItems(dates, callback);
+}
+
 export function subscribeToActiveDates(callback, isGuest) {
   if (isGuest) {
     return guest.guestSubscribeToActiveDates(callback);
