@@ -138,6 +138,30 @@ export function subscribeToReflections(callback) {
   });
 }
 
+// ── Import Queue ──────────────────────────────────────────
+
+const importQueueRef = collection(db, 'importQueue');
+
+export function enqueueMotivationImport(url) {
+  return addDoc(importQueueRef, {
+    url,
+    status: 'pending',
+    step: 'Queued for local worker...',
+    createdAt: serverTimestamp(),
+  });
+}
+
+export function subscribeToImportQueue(callback) {
+  const q = query(importQueueRef, orderBy('createdAt', 'desc'));
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+  });
+}
+
+export function dismissImportQueueItem(id) {
+  return deleteDoc(doc(db, 'importQueue', id));
+}
+
 // ── Items ─────────────────────────────────────────────────
 
 export function subscribeToItems(date, callback) {

@@ -1,0 +1,544 @@
+[
+  {
+    "text": "Prioritize your own growth and self-empowerment—letting others' success inspire you, but don't let it undermine your own potential or your unique light.",
+    "category": "motivation",
+    "author": "growthbyvisuals",
+    "sourceUrl": "https://www.instagram.com/p/DbX7S7SiIMs",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T07:48:05.619739+00:00"
+  },
+  {
+    "text": "The core lesson is to begin with simple, unrefined actions (like drawing small visuals) and let them grow naturally, even when initial ideas seem flawed. This emphasizes the power of persistence and the importance of not being overwhelmed by internal overthinking, allowing small efforts to build lasting impact.",
+    "category": "motivation",
+    "author": "growthbyvisuals",
+    "sourceUrl": "https://www.instagram.com/p/DbX7S7SiIMs",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T08:36:23.935179+00:00"
+  },
+  {
+    "text": "This sequence highlights the power of mindset: the courage to face fears of loss, collapse, and inability by declaring 'What if I WIN?' as a foundation for resilience. It emphasizes that true strength lies in believing in the possibility of triumph, even when facing potential failures.",
+    "category": "motivation",
+    "author": "stoicwind (Creator/Speaker)",
+    "sourceUrl": "https://www.instagram.com/reel/DP6NmipDEbr/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T08:58:19.788134+00:00"
+  },
+  {
+    "text": "Pride says 'I did it alone.'\nWisdom says 'I learned from others.'\nFear is 'what if.'\nFaith is 'even if.'\nRegret whispers 'I shouldn't have.'\nRedemption replies 'I'll do better.'\nHate says 'because of them.'\nLove says 'In spite of everything.",
+    "category": "lesson",
+    "author": "kisatsutaiofficial",
+    "sourceUrl": "https://www.instagram.com/reel/DNiuJ8CM6pm/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T09:44:45.973744+00:00"
+  },
+  {
+    "text": "The direct quote is: \"Just do it. Don't wait. Don't overthink. Start. Today.\"\n\nThe underlying principle is: \"Won't dim your own glow\" (emphasizing self-empowerment through immediate action).",
+    "category": "motivation",
+    "author": "growthbyvisuals",
+    "sourceUrl": "https://www.instagram.com/p/DbX7S7SiIMs",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T10:37:53.666920+00:00"
+  },
+  {
+    "text": "Don't aim for Perfection\"  \ninstead aim for Progress  \nstrive for progress, not perfection...",
+    "category": "motivation",
+    "author": "ifti.hi",
+    "sourceUrl": "https://www.instagram.com/reel/C9pCIEnIZd5/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T10:51:13.091899+00:00"
+  },
+  {
+    "text": "Your only focus should be on getting doing better complete.",
+    "category": "motivation",
+    "author": "goatd.minds",
+    "sourceUrl": "https://www.instagram.com/reel/DJomIvfzJmB/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T11:02:03.880989+00:00"
+  },
+  {
+    "text": "Everything else is a waste of time. Your focus doing better",
+    "category": "motivation",
+    "author": "goatd.minds",
+    "sourceUrl": "https://www.instagram.com/reel/DJomIvfzJmB/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T11:21:57.202925+00:00",
+    "tokenUsage": {
+      "model": "Huihui-gemma-4",
+      "prompt_tokens": 2272,
+      "completion_tokens": 623,
+      "total_tokens": 2895,
+      "ctx_limit": 64128,
+      "ctx_percent": 4.51,
+      "speed": 44.3
+    }
+  },
+  {
+    "text": "Everything else is a waste of time. Your focus doing better is a",
+    "category": "lesson",
+    "author": "goatd.minds",
+    "sourceUrl": "https://www.instagram.com/reel/DJomIvfzJmB/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T11:23:37.783934+00:00",
+    "tokenUsage": {
+      "model": "Huihui-gemma-4",
+      "prompt_tokens": 2272,
+      "completion_tokens": 538,
+      "total_tokens": 2810,
+      "ctx_limit": 64128,
+      "ctx_percent": 4.38,
+      "speed": 44.0
+    }
+  },
+  {
+    "text": "Your only focus should be on what you're doing. Get what you're doing. Everything complete waste.",
+    "category": "motivation",
+    "author": "goatd.minds",
+    "sourceUrl": "https://www.instagram.com/reel/DJomIvfzJmB/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T11:39:55.212586+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 11388,
+      "stage2_tokens": 1327,
+      "total_tokens": 12715,
+      "ctx_limit": 172000,
+      "ctx_percent": 7.39,
+      "prompt_tokens": 10670,
+      "completion_tokens": 2045
+    }
+  },
+  {
+    "text": "Don't aim for Perfection instead aim for Progress 1% better every day strive for progress, not perfection...",
+    "category": "lesson",
+    "author": "ifti.hi",
+    "sourceUrl": "https://www.instagram.com/reel/C9pCIEnIZd5/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T11:43:44.235756+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 11083,
+      "stage2_tokens": 1464,
+      "total_tokens": 12547,
+      "ctx_limit": 172000,
+      "ctx_percent": 7.29,
+      "prompt_tokens": 10729,
+      "completion_tokens": 1818
+    }
+  },
+  {
+    "text": "Help others shine, but never dim your own glow.",
+    "category": "principle",
+    "author": "growthbyvisuals",
+    "sourceUrl": "https://www.instagram.com/p/DbX7S7SiIMs",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T13:53:55.549885+00:00",
+    "tokenUsage": {
+      "model": "Huihui-gemma-4",
+      "prompt_tokens": 1380,
+      "completion_tokens": 1203,
+      "total_tokens": 2583,
+      "ctx_limit": 64128,
+      "ctx_percent": 4.03,
+      "speed": 47.7
+    }
+  },
+  {
+    "text": "there is no secret Ingredient to make something Special you just have to believe it's Special it's just You",
+    "category": "lesson",
+    "author": "aslimaaz",
+    "sourceUrl": "https://www.instagram.com/reel/Dbv32vLTyxi/?utm_source=ig_web_copy_link&stkn=NTc4MTIwNjQ2YQ==",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T14:07:08.120939+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 6831,
+      "stage2_tokens": 1972,
+      "total_tokens": 8803,
+      "ctx_limit": 172000,
+      "ctx_percent": 5.12,
+      "prompt_tokens": 7343,
+      "completion_tokens": 1460
+    }
+  },
+  {
+    "text": "I don't care Who's doing better than me. I'm not in Competition With anyone else. The only rival I have, is this person I was last year. last year I was different, and that's What truly it's me",
+    "category": "lesson",
+    "author": "moonlit_and_coffee",
+    "sourceUrl": "https://www.instagram.com/reel/Dai2n1ch6Vz/?utm_source=ig_web_copy_link&stkn=NTc4MTIwNjQ2YQ==",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T14:20:56.663249+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 5062,
+      "stage2_tokens": 1387,
+      "total_tokens": 6449,
+      "ctx_limit": 64128,
+      "ctx_percent": 10.06,
+      "prompt_tokens": 4351,
+      "completion_tokens": 2098
+    }
+  },
+  {
+    "text": "Your only focus should be on what doing. FOCUS you're Get what doing. Everything complete waste",
+    "category": "lesson",
+    "author": "goatd.minds",
+    "sourceUrl": "https://www.instagram.com/reel/DJomIvfzJmB/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T14:23:43.849492+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 6807,
+      "stage2_tokens": 1545,
+      "total_tokens": 8352,
+      "ctx_limit": 64128,
+      "ctx_percent": 13.02,
+      "prompt_tokens": 5322,
+      "completion_tokens": 3030
+    }
+  },
+  {
+    "text": "If on what left behind you will never be ABLE to See what lies AHEAD now go and look AROUND",
+    "category": "lesson",
+    "author": "tsopppoeva",
+    "sourceUrl": "https://www.instagram.com/reel/Dc5jHsVtR8Q/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T14:34:25.949851+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 6437,
+      "stage2_tokens": 1506,
+      "total_tokens": 7943,
+      "ctx_limit": 64128,
+      "ctx_percent": 12.39,
+      "prompt_tokens": 6674,
+      "completion_tokens": 1269
+    }
+  },
+  {
+    "text": "now go and look AROUND",
+    "category": "lesson",
+    "author": "tsopppoeva",
+    "sourceUrl": "https://www.instagram.com/reel/Dc5jHsVtR8Q/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T14:47:04.297539+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 7698,
+      "stage2_tokens": 1710,
+      "total_tokens": 9408,
+      "ctx_limit": 64128,
+      "ctx_percent": 14.67,
+      "prompt_tokens": 6676,
+      "completion_tokens": 2732
+    }
+  },
+  {
+    "text": "If you focus on the past, you won’t see what awaits you in the future! you will never be ABLE to See what lies AHEAD",
+    "category": "lesson",
+    "author": "tsopppoeva",
+    "sourceUrl": "https://www.instagram.com/reel/Dc5jHsVtR8Q/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T15:06:05.312933+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 14422,
+      "stage2_tokens": 1342,
+      "total_tokens": 15764,
+      "ctx_limit": 64128,
+      "ctx_percent": 24.58,
+      "prompt_tokens": 13275,
+      "completion_tokens": 2489,
+      "duration_seconds": 188.3,
+      "duration_formatted": "3m 8s"
+    }
+  },
+  {
+    "text": "Your only focus should be on getting better what you're doing. FOCUS what you're doing. Get better what you're doing. Everything else is a complete of time.",
+    "category": "principle",
+    "author": "goatd.minds",
+    "sourceUrl": "https://www.instagram.com/reel/DJomIvfzJmB/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T15:10:16.675966+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 10365,
+      "stage2_tokens": 1357,
+      "total_tokens": 11722,
+      "ctx_limit": 64128,
+      "ctx_percent": 18.28,
+      "prompt_tokens": 10255,
+      "completion_tokens": 1467,
+      "duration_seconds": 110.2,
+      "duration_formatted": "1m 50s",
+      "breakdown": {
+        "total_seconds": 110.2,
+        "total_formatted": "1m 50s",
+        "download_seconds": 8.0,
+        "keyframes_seconds": 6.4,
+        "stage1_seconds": 72.6,
+        "stage2_seconds": 20.7,
+        "num_frames": 46
+      }
+    }
+  },
+  {
+    "text": "I don't care Who's doing better than me. I'm not in Competition With anyone else. The only rival I have, is this person I was last year I was different, I've grown, I've learned, I've improved, and that's What truly matters, it's me Versus me.",
+    "category": "lesson",
+    "author": "moonlit_and_coffee",
+    "sourceUrl": "https://www.instagram.com/reel/Dai2n1ch6Vz/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T15:12:53.299796+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 8651,
+      "stage2_tokens": 1561,
+      "total_tokens": 10212,
+      "ctx_limit": 64128,
+      "ctx_percent": 15.92,
+      "prompt_tokens": 8335,
+      "completion_tokens": 1877,
+      "duration_seconds": 119.6,
+      "duration_formatted": "1m 59s",
+      "breakdown": {
+        "total_seconds": 119.6,
+        "total_formatted": "1m 59s",
+        "download_seconds": 8.9,
+        "keyframes_seconds": 5.9,
+        "stage1_seconds": 75.9,
+        "stage2_seconds": 23.7,
+        "num_frames": 41
+      }
+    }
+  },
+  {
+    "text": "There is no secret Ingredient\nyou just have to believe it's special\nit's Just You",
+    "category": "lesson",
+    "author": "Po and Mr. Ping",
+    "sourceUrl": "https://www.instagram.com/reel/Dbv32vLTyxi/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T15:16:10.013104+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 12748,
+      "stage2_tokens": 2239,
+      "total_tokens": 14987,
+      "ctx_limit": 64128,
+      "ctx_percent": 23.37,
+      "prompt_tokens": 12704,
+      "completion_tokens": 2283,
+      "duration_seconds": 143.3,
+      "duration_formatted": "2m 23s",
+      "breakdown": {
+        "total_seconds": 143.3,
+        "total_formatted": "2m 23s",
+        "download_seconds": 5.9,
+        "keyframes_seconds": 9.1,
+        "stage1_seconds": 97.3,
+        "stage2_seconds": 28.8,
+        "num_frames": 61
+      }
+    }
+  },
+  {
+    "text": "Helping others shine",
+    "category": "principle",
+    "author": "growthbyvisuals",
+    "sourceUrl": "https://www.instagram.com/p/DbX7S7SiIMs",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T15:17:38.155938+00:00",
+    "tokenUsage": {
+      "model": "Huihui-gemma-4",
+      "prompt_tokens": 1380,
+      "completion_tokens": 1027,
+      "total_tokens": 2407,
+      "ctx_limit": 64128,
+      "ctx_percent": 3.75,
+      "speed": 45.1,
+      "duration_seconds": 33.9,
+      "duration_formatted": "33s",
+      "breakdown": {
+        "total_seconds": 33.9,
+        "total_formatted": "33s",
+        "download_seconds": 8.1,
+        "stage2_seconds": 0.0
+      }
+    }
+  },
+  {
+    "text": "JUST MAKE IT EXIST FIRST. YOU CAN MAKE IT GOOD LATER. HOW MUCH YOU LEARN: From theory, From practice, From mistakes. Keeping it all in your head. Writing it down. Ugly action beats perfection. I can't do this. But you did. Before you can be great, you have to be good. Before you can be good, you have to be bad. Before you can be bad, you have to try. Maybe you don't realize how far you've come. Because you keep raising the bar. You can be a masterpiece ... and a work in progress simultaneously. Helping others shine, Won't dim your glow.",
+    "category": "lesson",
+    "author": "growthbyvisuals",
+    "sourceUrl": "https://www.instagram.com/p/DbX7S7SiIMs",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T15:37:10.473870+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 9701,
+      "stage2_tokens": 4543,
+      "total_tokens": 14244,
+      "ctx_limit": 64128,
+      "ctx_percent": 22.21,
+      "prompt_tokens": 10941,
+      "completion_tokens": 3303,
+      "duration_seconds": 162.8,
+      "duration_formatted": "2m 42s",
+      "breakdown": {
+        "total_seconds": 162.8,
+        "total_formatted": "2m 42s",
+        "download_seconds": 4.9,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 125.2,
+        "stage2_seconds": 30.5,
+        "num_slides": 10
+      }
+    }
+  },
+  {
+    "text": "strive for progress, not perfection...",
+    "category": "lesson",
+    "author": "ifti.hi",
+    "sourceUrl": "https://www.instagram.com/reel/C9pCIEnIZd5/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T16:19:52.602482+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 10862,
+      "stage2_tokens": 1516,
+      "total_tokens": 12378,
+      "ctx_limit": 64128,
+      "ctx_percent": 19.3,
+      "prompt_tokens": 10456,
+      "completion_tokens": 1922,
+      "duration_seconds": 126.7,
+      "duration_formatted": "2m 6s",
+      "breakdown": {
+        "total_seconds": 126.7,
+        "total_formatted": "2m 6s",
+        "download_seconds": 4.8,
+        "keyframes_seconds": 6.9,
+        "stage1_seconds": 91.8,
+        "stage2_seconds": 20.8,
+        "num_frames": 46
+      }
+    }
+  },
+  {
+    "text": "JUST MAKE IT EXIST FIRST\nYOU CAN MAKE IT GOOD LATER\nUgly action beats perfection\nBefore you can be great, you have to be good\nBefore you can be good, you have to be bad\nBefore you can be bad, you have to try\nYou can be a masterpiece ... and a work in progress simultaneously\nMaybe you don't realize how far you've come\nBecause you keep raising the bar",
+    "category": "lesson",
+    "author": "growthbyvisuals",
+    "sourceUrl": "https://www.instagram.com/p/DbX7S7SiIMs",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T16:23:36.844583+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 9550,
+      "stage2_tokens": 4057,
+      "total_tokens": 13607,
+      "ctx_limit": 64128,
+      "ctx_percent": 21.22,
+      "prompt_tokens": 9885,
+      "completion_tokens": 3722,
+      "duration_seconds": 173.9,
+      "duration_formatted": "2m 53s",
+      "breakdown": {
+        "total_seconds": 173.9,
+        "total_formatted": "2m 53s",
+        "download_seconds": 5.1,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 125.1,
+        "stage2_seconds": 41.7,
+        "num_slides": 10
+      }
+    }
+  },
+  {
+    "text": "Fear is 'what if'. Faith is 'even if'.",
+    "category": "lesson",
+    "author": "kisatsutaiofficial",
+    "sourceUrl": "https://www.instagram.com/reel/DNiuJ8CM6pm/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T16:26:03.231117+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 10431,
+      "stage2_tokens": 2070,
+      "total_tokens": 12501,
+      "ctx_limit": 64128,
+      "ctx_percent": 19.49,
+      "prompt_tokens": 10522,
+      "completion_tokens": 1979,
+      "duration_seconds": 126.0,
+      "duration_formatted": "2m 6s",
+      "breakdown": {
+        "total_seconds": 126.0,
+        "total_formatted": "2m 6s",
+        "download_seconds": 9.2,
+        "keyframes_seconds": 7.0,
+        "stage1_seconds": 74.6,
+        "stage2_seconds": 32.8,
+        "num_frames": 47
+      }
+    }
+  },
+  {
+    "text": "Pressure changes everything.\nSome people you squeeze them, they focus. Others fold.\n\nYou summon your talent at will.\nYou deliver on a deadline.\nAnd you sleep at night.",
+    "category": "lesson",
+    "author": "John Milton (@aslimaaz)",
+    "sourceUrl": "https://www.instagram.com/reel/DbgKXP6TuXs/",
+    "sourcePlatform": "instagram",
+    "createdAt": "2026-09-22T17:37:47.645751+00:00",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 13190,
+      "stage2_tokens": 2981,
+      "total_tokens": 16171,
+      "ctx_limit": 64128,
+      "ctx_percent": 25.22,
+      "prompt_tokens": 12992,
+      "completion_tokens": 3179,
+      "duration_seconds": 195.5,
+      "duration_formatted": "3m 15s",
+      "breakdown": {
+        "total_seconds": 195.5,
+        "total_formatted": "3m 15s",
+        "download_seconds": 3.4,
+        "audio_seconds": 0.98,
+        "keyframes_seconds": 8.8,
+        "stage1_seconds": 145.5,
+        "stage2_seconds": 32.7,
+        "num_frames": 59
+      }
+    }
+  },
+  {
+    "text": "To be successful at anything, the truth is you don't have to be special. You just have to be what most people aren't. Consistent, determined, and willing to work for it. No shortcuts.",
+    "category": "principle",
+    "author": "Tom Brady",
+    "createdAt": "2026-09-22T18:23:50.094928+00:00",
+    "sourceUrl": "https://www.instagram.com/reel/Db7any2TuVP/",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 11731,
+      "stage2_tokens": 2554,
+      "total_tokens": 14285,
+      "ctx_limit": 64128,
+      "ctx_percent": 22.28,
+      "prompt_tokens": 11437,
+      "completion_tokens": 2848,
+      "speed": 29.9,
+      "duration_seconds": 169.6,
+      "duration_formatted": "2m 49s",
+      "breakdown": {
+        "total_seconds": 169.6,
+        "total_formatted": "2m 49s",
+        "download_seconds": 5.9,
+        "audio_seconds": 0.98,
+        "keyframes_seconds": 0.3,
+        "stage1_seconds": 129.2,
+        "stage2_seconds": 29.9,
+        "num_frames": 54
+      }
+    }
+  }
+]

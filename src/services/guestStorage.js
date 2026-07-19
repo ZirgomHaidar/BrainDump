@@ -5,6 +5,7 @@ export const GUEST_MODE_KEY = 'bd_guest_mode';
 export const GUEST_ITEMS_KEY = 'bd_guest_items';
 export const GUEST_WEEKLY_KEY = 'bd_guest_weekly';
 export const GUEST_REFLECTIONS_KEY = 'bd_guest_reflections';
+export const GUEST_IMPORT_QUEUE_KEY = 'bd_guest_import_queue';
 export const GUEST_BANNER_DISMISSED_KEY = 'bd_guest_banner_dismissed';
 
 // ── Date Helpers ──────────────────────────────────────────────────
@@ -40,6 +41,7 @@ const listeners = {
   weekly: new Set(),
   activeWeeks: new Set(),
   reflections: new Set(),
+  importQueue: new Set(),
 };
 
 function notify(type) {
@@ -410,6 +412,39 @@ export function guestSubscribeToReflections(callback) {
   run();
   listeners.reflections.add(run);
   return () => listeners.reflections.delete(run);
+}
+
+// ── Import Queue API (Guest Mode) ─────────────────────────────────
+export function guestEnqueueMotivationImport(url) {
+  const list = getRaw(GUEST_IMPORT_QUEUE_KEY, []);
+  const newItem = {
+    id: `guest_queue_${Date.now()}`,
+    url,
+    status: 'guest_notice',
+    step: 'Sign in with Google to enable background AI processing from your local PC worker.',
+    createdAt: Date.now(),
+  };
+  list.unshift(newItem);
+  setRaw(GUEST_IMPORT_QUEUE_KEY, list);
+  notify('importQueue');
+  return Promise.resolve(newItem);
+}
+
+export function guestSubscribeToImportQueue(callback) {
+  const run = () => {
+    const list = getRaw(GUEST_IMPORT_QUEUE_KEY, []);
+    callback(list);
+  };
+  run();
+  listeners.importQueue.add(run);
+  return () => listeners.importQueue.delete(run);
+}
+
+export function guestDismissImportQueueItem(id) {
+  const list = getRaw(GUEST_IMPORT_QUEUE_KEY, []).filter((q) => q.id !== id);
+  setRaw(GUEST_IMPORT_QUEUE_KEY, list);
+  notify('importQueue');
+  return Promise.resolve();
 }
 
 // ── Firestore Migration ───────────────────────────────────────────

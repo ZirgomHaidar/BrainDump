@@ -26,3 +26,7 @@ dist-ssr
 .env
 *service-account*.json
 scripts/node_modules
+.venv
+scripts/.venv
+__pycache__/
+*.pyc
