@@ -105,3 +105,25 @@ export function subscribeToReflections(callback, isGuest) {
   }
   return fb.subscribeToReflections(callback);
 }
+
+// ── Import Queue ──────────────────────────────────────────────────
+export function enqueueMotivationImport(url, isGuest) {
+  if (isGuest) {
+    return guest.guestEnqueueMotivationImport(url);
+  }
+  return fb.enqueueMotivationImport(url);
+}
+
+export function subscribeToImportQueue(callback, isGuest) {
+  if (isGuest) {
+    return guest.guestSubscribeToImportQueue(callback);
+  }
+  return fb.subscribeToImportQueue(callback);
+}
+
+export function dismissImportQueueItem(id, isGuest) {
+  if (isGuest) {
+    return guest.guestDismissImportQueueItem(id);
+  }
+  return fb.dismissImportQueueItem(id);
+}
