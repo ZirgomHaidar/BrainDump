@@ -447,6 +447,13 @@ export function guestDismissImportQueueItem(id) {
   return Promise.resolve();
 }
 
+export function guestClearPendingImportQueue() {
+  const list = getRaw(GUEST_IMPORT_QUEUE_KEY, []).filter((q) => q.status !== 'pending' && q.status !== 'guest_notice');
+  setRaw(GUEST_IMPORT_QUEUE_KEY, list);
+  notify('importQueue');
+  return Promise.resolve();
+}
+
 // ── Firestore Migration ───────────────────────────────────────────
 export async function migrateGuestDataToFirestore(firestoreApis) {
   const { addItem, addWeeklyItem, addReflection } = firestoreApis;

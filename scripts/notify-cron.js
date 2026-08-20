@@ -185,11 +185,11 @@ async function runCron() {
         enabled: settings.pendingTasks !== false,
         matches: isSlotDue(totalMinutes, 8 * 60, 12 * 60), // 08:00 - 12:00
         action: async () => {
-          const count = await getPendingTasksCount(dateStr, currentWeekStr, dayIndex);
-          if (count <= 0) return null;
+          const details = await getPendingTasksDetails(dateStr, currentWeekStr);
+          if (details.count <= 0) return null;
           return {
-            title: 'BRAINDUMP · Pending Tasks',
-            body: `You have ${count} pending task${count === 1 ? '' : 's'} today. Morning focus: pick 1–3 to tackle.`,
+            title: 'BRAINDUMP · Morning Focus',
+            body: formatPendingTasksBody('morning', details.dailyTasks, details.weeklyTasks),
             tag: 'bd-pending-morning',
           };
         }
@@ -199,11 +199,11 @@ async function runCron() {
         enabled: settings.pendingTasks !== false,
         matches: isSlotDue(totalMinutes, 12 * 60 + 30, 17 * 60), // 12:30 - 17:00
         action: async () => {
-          const count = await getPendingTasksCount(dateStr, currentWeekStr, dayIndex);
-          if (count <= 0) return null;
+          const details = await getPendingTasksDetails(dateStr, currentWeekStr);
+          if (details.count <= 0) return null;
           return {
-            title: 'BRAINDUMP · Pending Tasks',
-            body: `Quick check-in: ${count} pending task${count === 1 ? '' : 's'} remaining for this afternoon.`,
+            title: 'BRAINDUMP · Afternoon Check-in',
+            body: formatPendingTasksBody('afternoon', details.dailyTasks, details.weeklyTasks),
             tag: 'bd-pending-afternoon',
           };
         }
@@ -213,11 +213,11 @@ async function runCron() {
         enabled: settings.pendingTasks !== false,
         matches: isSlotDue(totalMinutes, 17 * 60, 22 * 60), // 17:00 - 22:00
         action: async () => {
-          const count = await getPendingTasksCount(dateStr, currentWeekStr, dayIndex);
-          if (count <= 0) return null;
+          const details = await getPendingTasksDetails(dateStr, currentWeekStr);
+          if (details.count <= 0) return null;
           return {
-            title: 'BRAINDUMP · Pending Tasks',
-            body: `Evening wind-down: ${count} task${count === 1 ? '' : 's'} left. Wrap up or roll over to tomorrow.`,
+            title: 'BRAINDUMP · Evening Wrap-up',
+            body: formatPendingTasksBody('evening', details.dailyTasks, details.weeklyTasks),
             tag: 'bd-pending-evening',
           };
         }
@@ -357,34 +357,50 @@ async function markDispatched(docRef, slotRecordKey, existingDispatched = {}) {
 
 // ── 5. Firestore Task Calculators ─────────────────────────────────
 
-async function getPendingTasksCount(dateStr, currentWeekStr, dayIndex) {
+function formatPendingTasksBody(period, dailyTasks = [], weeklyTasks = []) {
+  const parts = [];
+
+  if (dailyTasks.length > 0) {
+    parts.push(`Today (${dailyTasks.length}): ${dailyTasks.join(', ')}`);
+  }
+  if (weeklyTasks.length > 0) {
+    parts.push(`Weekly (${weeklyTasks.length}): ${weeklyTasks.join(', ')}`);
+  }
+
+  return parts.length > 0 ? parts.join(' • ') : 'No pending tasks remaining!';
+}
+
+async function getPendingTasksDetails(dateStr, currentWeekStr) {
   try {
     // 1. Daily items
     const itemsSnap = await db.collection('items').where('date', '==', dateStr).get();
-    let pendingDaily = 0;
+    const dailyTasks = [];
     itemsSnap.forEach(d => {
       const item = d.data();
-      if (item.section === 'letgo') {
-        if (!item.crossedOut) pendingDaily++;
-      } else {
-        if (!item.done) pendingDaily++;
+      const isPending = item.section === 'letgo' ? !item.crossedOut : !item.done;
+      if (isPending && item.text?.trim()) {
+        dailyTasks.push(item.text.trim());
       }
     });
 
-    // 2. Weekly items
+    // 2. All pending weekly items for the entire current week
     const weeklySnap = await db.collection('weeklyItems').where('weekStr', '==', currentWeekStr).get();
-    let pendingWeekly = 0;
+    const weeklyTasks = [];
     weeklySnap.forEach(d => {
       const item = d.data();
-      if (item.dayIndex === dayIndex && !item.done) {
-        pendingWeekly++;
+      if (!item.done && item.text?.trim()) {
+        weeklyTasks.push(item.text.trim());
       }
     });
 
-    return pendingDaily + pendingWeekly;
+    return {
+      count: dailyTasks.length + weeklyTasks.length,
+      dailyTasks,
+      weeklyTasks,
+    };
   } catch (err) {
     console.error('Error calculating pending tasks:', err.message);
-    return 0;
+    return { count: 0, dailyTasks: [], weeklyTasks: [] };
   }
 }
 

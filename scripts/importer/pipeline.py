@@ -13,8 +13,10 @@ from typing import Any, Callable, Dict, Optional, Tuple
 
 from .config import (
     DEFAULT_ROUTER_URL,
+    MAX_VIDEO_DURATION_SECONDS,
     MODEL_TEXT,
     MODEL_VIDEO,
+    ContentRejectionError,
     build_carousel_stage2_prompt,
     build_image_stage2_prompt,
     build_text_prompt,
@@ -27,7 +29,13 @@ from .config import (
 )
 from .db import save_reflection
 from .downloader import detect_platform, download_instagram, download_youtube
-from .llm import call_llama_router, clear_llm_context, compute_token_metrics
+from .llm import (
+    call_llama_router,
+    clear_llm_context,
+    compute_token_metrics,
+    is_server_alive,
+    wait_for_server,
+)
 from .media import (
     encode_image,
     get_video_duration,
@@ -56,6 +64,11 @@ def process_video(
     caption = media_info["transcript"] or media_info["caption"] or ""
 
     duration = get_video_duration(video_path)
+    if duration > MAX_VIDEO_DURATION_SECONDS:
+        raise ContentRejectionError(
+            f"Video duration ({duration:.0f}s) exceeds the 2-minute (120s) limit. Only short-form reels/shorts under 2m are supported."
+        )
+
     if duration <= 40.0:
         interval = 0.30
         mode_desc = f"Short Reel (ultra-dense {interval}s)"
@@ -373,6 +386,13 @@ def process_url(
         error_log(f"Unsupported URL format (must be Instagram or YouTube): {url}")
         return None
 
+    if not is_server_alive(server_url):
+        log(f"llama-server at {server_url} is currently offline. Waiting for server to become active...", prefix="⏳")
+        if progress_callback:
+            progress_callback("Waiting for local AI server to come online...")
+        if not wait_for_server(server_url, progress_callback=progress_callback):
+            raise RuntimeError(f"llama-server at {server_url} is unreachable.")
+
     if progress_callback:
         progress_callback(f"Connecting to {platform.title()}...")
 
@@ -410,6 +430,11 @@ def process_url(
         else:
             result, timing, usage = process_text(media_info, server_url, progress_callback)
 
+        # Check relevance guardrail
+        if not result.get("is_relevant", True):
+            rejection_reason = result.get("rejection_reason") or "Content does not relate to motivation, principles, lessons, or experiences."
+            raise ContentRejectionError(rejection_reason)
+
         proc_elapsed = round(time.time() - start_proc_time, 1)
         mins = int(proc_elapsed // 60)
         secs = int(proc_elapsed % 60)
@@ -442,6 +467,15 @@ def process_url(
         save_reflection(reflection, dry_run=dry_run)
         return reflection
 
+    except ContentRejectionError as e:
+        log(f"Content Rejected: {e}", prefix="🚫")
+        return {
+            "status": "rejected",
+            "is_relevant": False,
+            "rejection_reason": str(e),
+            "sourceUrl": url,
+            "sourcePlatform": platform,
+        }
     except Exception as e:
         error_log(f"Failed to process {url}: {e}")
         raise

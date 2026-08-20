@@ -9,6 +9,7 @@ import {
   triggerInactivityNotification,
   triggerWeeklyDigestNotification,
   calculatePendingTasks,
+  getPendingTasksBreakdown,
   calculateWeeklySummary,
 } from '../services/notificationService';
 import {
@@ -18,7 +19,7 @@ import {
 } from '../services/pushSubscriptionService';
 import './NotificationSettings.css';
 
-export default function NotificationSettings({ isOpen, onClose, items = [], isGuest = false }) {
+export default function NotificationSettings({ isOpen, onClose, items = [], weeklyItems = [], isGuest = false }) {
   const [permission, setPermission] = useState(getNotificationPermission);
   const [settings, setSettings] = useState(getNotificationSettings);
   const [feedback, setFeedback] = useState('');
@@ -128,9 +129,13 @@ export default function NotificationSettings({ isOpen, onClose, items = [], isGu
 
   // ── Test Triggers ───────────────────────────────────────
   const testPendingTasks = () => ensurePermissionAndSend(() => {
-    const count = calculatePendingTasks(items, []);
-    const testCount = count > 0 ? count : 3;
-    return triggerPendingTasksNotification('morning', testCount);
+    const details = getPendingTasksBreakdown(items, weeklyItems);
+    const testDetails = details.count > 0 ? details : {
+      count: 3,
+      dailyTasks: ['Review daily priorities', 'Clear mind clutter'],
+      weeklyTasks: ['Weekly project milestone'],
+    };
+    return triggerPendingTasksNotification('morning', testDetails);
   });
 
   const testGentleReminder = () => ensurePermissionAndSend(() => {
@@ -142,7 +147,7 @@ export default function NotificationSettings({ isOpen, onClose, items = [], isGu
   });
 
   const testWeeklyDigest = () => ensurePermissionAndSend(() => {
-    const stats = calculateWeeklySummary(items, []);
+    const stats = calculateWeeklySummary(items, weeklyItems);
     const testStats = stats.dumped > 0 ? stats : { dumped: 12, completed: 8, letGo: 3 };
     return triggerWeeklyDigestNotification(testStats);
   });
@@ -241,9 +246,9 @@ export default function NotificationSettings({ isOpen, onClose, items = [], isGu
           {/* Rule 1: Pending Tasks */}
           <div className="notif-modal__item">
             <div className="notif-modal__item-info">
-              <div className="notif-modal__item-title">1. Pending Tasks Count</div>
+              <div className="notif-modal__item-title">1. Pending Daily & Weekly Tasks</div>
               <div className="notif-modal__item-desc">
-                Daily summaries at <strong>08:00</strong>, <strong>12:30</strong>, and <strong>17:00</strong> with uncompleted tasks.
+                Daily summaries at <strong>08:00</strong>, <strong>12:30</strong>, and <strong>17:00</strong> with uncompleted daily tasks and weekly plan entries.
               </div>
             </div>
             <div className="notif-modal__item-actions">

@@ -5,6 +5,7 @@ import {
   isSlotDispatched,
   markSlotDispatched,
   calculatePendingTasks,
+  getPendingTasksBreakdown,
   calculateInactivityDays,
   calculateWeeklySummary,
   triggerPendingTasksNotification,
@@ -86,9 +87,9 @@ export function useNotificationScheduler(activeDates = []) {
         for (const slot of slots) {
           if (isWithinSlotWindow(currentMinutes, slot.targetMins)) {
             if (!isSlotDispatched(slot.key, currentDateStr)) {
-              const count = calculatePendingTasks(todayItemsRef.current, currentWeeklyItemsRef.current);
-              if (count > 0) {
-                triggerPendingTasksNotification(slot.timeOfDay, count);
+              const details = getPendingTasksBreakdown(todayItemsRef.current, currentWeeklyItemsRef.current);
+              if (details.count > 0) {
+                triggerPendingTasksNotification(slot.timeOfDay, details);
               }
               markSlotDispatched(slot.key, currentDateStr);
             }

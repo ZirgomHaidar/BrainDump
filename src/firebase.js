@@ -22,6 +22,8 @@ import {
   query,
   where,
   orderBy,
+  getDocs,
+  writeBatch,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -160,6 +162,15 @@ export function subscribeToImportQueue(callback) {
 
 export function dismissImportQueueItem(id) {
   return deleteDoc(doc(db, 'importQueue', id));
+}
+
+export async function clearPendingImportQueue() {
+  const q = query(importQueueRef, where('status', '==', 'pending'));
+  const snap = await getDocs(q);
+  if (snap.empty) return;
+  const batch = writeBatch(db);
+  snap.docs.forEach((d) => batch.delete(d.ref));
+  return batch.commit();
 }
 
 // ── Items ─────────────────────────────────────────────────

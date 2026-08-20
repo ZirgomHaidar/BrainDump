@@ -115,6 +115,41 @@
   padding: 16px 20px 0 20px;
 }
 
+.motivation__queue-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px 2px 2px;
+}
+
+.motivation__queue-header-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.motivation__queue-clear-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-danger, #e57373);
+  background: rgba(229, 115, 115, 0.08);
+  border: var(--border-width) solid rgba(229, 115, 115, 0.25);
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.motivation__queue-clear-btn:hover {
+  background: var(--color-danger, #e57373);
+  color: #050505;
+}
+
 .motivation__queue-card {
   border: var(--border-width) solid var(--line);
   background: rgba(18, 18, 18, 0.85);
@@ -145,6 +180,10 @@
   border-color: var(--color-danger, #e57373);
 }
 
+.motivation__queue-card--rejected {
+  border-color: #ffb74d;
+}
+
 .motivation__queue-header {
   display: flex;
   align-items: center;
@@ -171,6 +210,11 @@
 
 .motivation__queue-card--failed .motivation__queue-spinner {
   background: var(--color-danger, #e57373);
+  animation: none;
+}
+
+.motivation__queue-card--rejected .motivation__queue-spinner {
+  background: #ffb74d;
   animation: none;
 }
 
@@ -233,17 +277,29 @@
 }
 
 .motivation__queue-dismiss {
-  border: none;
-  background: transparent;
+  border: var(--border-width) solid transparent;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-dim);
   cursor: pointer;
-  padding: 2px 6px;
-  font-size: 11px;
-  transition: color 0.15s;
+  padding: 2px 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all 0.15s;
+  flex-shrink: 0;
 }
 
 .motivation__queue-dismiss:hover {
   color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.motivation__queue-dismiss--cancel:hover {
+  color: var(--color-danger, #e57373);
+  border-color: rgba(229, 115, 115, 0.3);
+  background: rgba(229, 115, 115, 0.12);
 }
 
 .motivation__queue-step {
@@ -275,6 +331,15 @@
   background: rgba(229, 115, 115, 0.08);
   padding: 4px 8px;
   border-left: 2px solid var(--color-danger, #e57373);
+}
+
+.motivation__queue-rejection {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #ffb74d;
+  background: rgba(255, 183, 77, 0.08);
+  padding: 4px 8px;
+  border-left: 2px solid #ffb74d;
 }
 
 .motivation__empty {

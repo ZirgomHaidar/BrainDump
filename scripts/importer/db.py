@@ -13,7 +13,20 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional
 
-from .config import LOCAL_CACHE_FILE, PROJECT_ROOT, error_log, log
+from .config import (
+    LOCAL_CACHE_FILE,
+    PROJECT_ROOT,
+    ContentRejectionError,
+    error_log,
+    log,
+)
+from .llm import is_server_alive
+from .config import ContentRejectionError
+
+
+class JobCancelledError(Exception):
+    """Raised when a processing job is deleted or cancelled from queue."""
+    pass
 
 try:
     import firebase_admin
@@ -170,8 +183,22 @@ def run_listener_loop(
     log(" Ready to receive links from Vercel web app or mobile!")
     log("==========================================================")
 
+    server_was_offline = False
+
     while True:
         try:
+            # Stand by if llama-server is offline so pending jobs are never failed prematurely
+            if not is_server_alive(server_url):
+                if not server_was_offline:
+                    log(f"llama-server at {server_url} is currently offline. Standing by until server is active (jobs remain safely pending in queue)...", prefix="⏳")
+                    server_was_offline = True
+                time.sleep(poll_interval)
+                continue
+
+            if server_was_offline:
+                log(f"llama-server at {server_url} is active and ready! Resuming queue processing...", prefix="🚀")
+                server_was_offline = False
+
             queue_ref = db.collection("importQueue")
             if FieldFilter is not None:
                 query = queue_ref.where(filter=FieldFilter("status", "==", "pending"))
@@ -198,7 +225,12 @@ def run_listener_loop(
 
                 def update_step(msg: str):
                     try:
+                        snap = doc.reference.get()
+                        if not snap.exists or snap.to_dict().get("status") == "cancelled":
+                            raise JobCancelledError("Job was removed or cancelled from queue.")
                         doc.reference.update({"step": msg})
+                    except JobCancelledError:
+                        raise
                     except Exception:
                         pass
 
@@ -214,6 +246,17 @@ def run_listener_loop(
                     )
 
                     if result:
+                        if result.get("status") == "rejected" or result.get("is_relevant") is False:
+                            reason = result.get("rejection_reason") or "Content is not relevant to BrainDump categories."
+                            doc.reference.update({
+                                "status": "rejected",
+                                "step": f"Rejected: {reason}",
+                                "error": reason,
+                                "completedAt": firestore.SERVER_TIMESTAMP,
+                            })
+                            log(f"Job [{doc.id}] rejected: {reason}", prefix="🚫")
+                            continue
+
                         job_elapsed = round(time.time() - t_start, 1)
                         mins = int(job_elapsed // 60)
                         secs = int(job_elapsed % 60)
@@ -253,6 +296,17 @@ def run_listener_loop(
                             "step": "Failed to extract motivation.",
                             "error": "Failed to parse content from URL.",
                         })
+                except JobCancelledError:
+                    log(f"Job [{doc.id}] was cancelled or removed from queue. Aborting inference.", prefix="🛑")
+                except ContentRejectionError as err:
+                    reason = str(err)
+                    log(f"Job [{doc.id}] rejected: {reason}", prefix="🚫")
+                    doc.reference.update({
+                        "status": "rejected",
+                        "step": f"Rejected: {reason}",
+                        "error": reason,
+                        "completedAt": firestore.SERVER_TIMESTAMP,
+                    })
                 except Exception as err:
                     error_log(f"Error executing job [{doc.id}]: {err}")
                     doc.reference.update({
@@ -269,3 +323,78 @@ def run_listener_loop(
         except Exception as e:
             error_log(f"Listener error: {e}")
             time.sleep(poll_interval * 2)
+
+
+# ── CLI Queue Management ──────────────────────────────────────────
+def list_queue_jobs() -> None:
+    """Lists all jobs currently in the Firestore importQueue."""
+    db = get_firestore_client()
+    if not db:
+        error_log("Firestore credentials not found.")
+        return
+
+    try:
+        docs = list(db.collection("importQueue").order_by("createdAt", direction=firestore.Query.DESCENDING).stream())
+    except Exception:
+        docs = list(db.collection("importQueue").stream())
+
+    if not docs:
+        print("\nQueue is empty. No jobs found in 'importQueue'.\n")
+        return
+
+    print(f"\nFound {len(docs)} item(s) in importQueue:")
+    print(f"{'ID':<24} {'STATUS':<14} {'URL':<50}")
+    print("-" * 90)
+    for d in docs:
+        data = d.to_dict()
+        status = data.get("status", "unknown")
+        url = data.get("url", "")
+        print(f"{d.id:<24} {status:<14} {url[:48]}")
+    print()
+
+
+def clear_queue_jobs(pending_only: bool = True) -> int:
+    """Deletes pending (or all) jobs from the Firestore importQueue."""
+    db = get_firestore_client()
+    if not db:
+        error_log("Firestore credentials not found.")
+        return 0
+
+    q_ref = db.collection("importQueue")
+    if pending_only:
+        if FieldFilter is not None:
+            query = q_ref.where(filter=FieldFilter("status", "==", "pending"))
+        else:
+            query = q_ref.where("status", "==", "pending")
+    else:
+        query = q_ref
+
+    docs = list(query.stream())
+    if not docs:
+        log("No pending jobs found in queue to clear.", prefix="ℹ️")
+        return 0
+
+    for d in docs:
+        d.reference.delete()
+
+    log(f"Cleared {len(docs)} pending job(s) from importQueue.", prefix="🗑️")
+    return len(docs)
+
+
+def remove_queue_job(job_id: str) -> bool:
+    """Deletes a specific job from importQueue by ID."""
+    db = get_firestore_client()
+    if not db:
+        error_log("Firestore credentials not found.")
+        return False
+
+    doc_ref = db.collection("importQueue").document(job_id)
+    snap = doc_ref.get()
+    if not snap.exists:
+        error_log(f"Queue job [{job_id}] not found.")
+        return False
+
+    data = snap.to_dict()
+    doc_ref.delete()
+    log(f"Removed job [{job_id}] ({data.get('status', 'unknown')}: {data.get('url', '')}) from importQueue.", prefix="🗑️")
+    return True

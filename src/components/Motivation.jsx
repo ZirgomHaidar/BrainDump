@@ -6,6 +6,7 @@ import {
   enqueueMotivationImport,
   subscribeToImportQueue,
   dismissImportQueueItem,
+  clearPendingImportQueue,
 } from '../services/storageAdapter';
 import { useAuth } from '../hooks/useAuth';
 import './Motivation.css';
@@ -27,18 +28,24 @@ function formatDate(ts) {
 }
 
 function QueueItemTimer({ item }) {
+  // Do not show or run the timer while the item is still waiting in the queue
+  if (item.status === 'pending' || item.status === 'guest_notice') {
+    return null;
+  }
+
   const [elapsedSec, setElapsedSec] = useState(0);
   const isCompleted = item.status === 'completed';
   const isFailed = item.status === 'failed';
-  const isFinished = isCompleted || isFailed;
+  const isRejected = item.status === 'rejected';
+  const isFinished = isCompleted || isFailed || isRejected;
 
-  const startMs =
-    item.createdAt?.toDate?.()?.getTime() ||
-    (typeof item.createdAt === 'number' ? item.createdAt : null) ||
-    (item.createdAt ? new Date(item.createdAt).getTime() : null) ||
+  const clientStartMs = useRef(Date.now());
+  const startedAtMs =
     item.startedAt?.toDate?.()?.getTime() ||
     (typeof item.startedAt === 'number' ? item.startedAt : null) ||
     (item.startedAt ? new Date(item.startedAt).getTime() : null);
+
+  const startMs = startedAtMs || (item.status === 'processing' ? clientStartMs.current : null);
 
   useEffect(() => {
     if (!startMs) return;
@@ -59,7 +66,7 @@ function QueueItemTimer({ item }) {
     return () => clearInterval(timer);
   }, [startMs, isFinished, item.completedAt]);
 
-  const finalDuration = item.totalDurationFormatted || item.durationFormatted;
+  const finalDuration = item.durationFormatted || item.totalDurationFormatted;
 
   if (isCompleted && finalDuration) {
     return (
@@ -201,6 +208,7 @@ export default function Motivation() {
         (q.status === 'pending' ||
           q.status === 'processing' ||
           q.status === 'failed' ||
+          q.status === 'rejected' ||
           q.status === 'guest_notice') &&
         !dismissedCompleted.has(q.id)
     ),
@@ -266,11 +274,29 @@ export default function Motivation() {
       {/* Active Import Queue Cards */}
       {activeQueue.length > 0 && (
         <div className="motivation__queue-list">
+          <div className="motivation__queue-header-bar">
+            <span className="motivation__queue-header-title">
+              Queue ({activeQueue.length})
+            </span>
+            {activeQueue.some((q) => q.status === 'pending') && (
+              <button
+                type="button"
+                className="motivation__queue-clear-btn"
+                onClick={async () => {
+                  await clearPendingImportQueue(isGuest);
+                }}
+                title="Remove all pending items from queue"
+              >
+                Clear All Pending
+              </button>
+            )}
+          </div>
           {activeQueue.map((item) => {
             const isPending = item.status === 'pending';
             const isProcessing = item.status === 'processing';
             const isCompleted = item.status === 'completed';
             const isFailed = item.status === 'failed';
+            const isRejected = item.status === 'rejected';
             const isGuestNotice = item.status === 'guest_notice';
 
             return (
@@ -282,7 +308,7 @@ export default function Motivation() {
                   <div className="motivation__queue-status-line">
                     <span className="motivation__queue-spinner" />
                     <span className="motivation__queue-status-tag">
-                      {isProcessing ? 'PROCESSING' : isCompleted ? 'COMPLETED' : isFailed ? 'FAILED' : isGuestNotice ? 'GUEST MODE' : 'QUEUED'}
+                      {isProcessing ? 'PROCESSING' : isCompleted ? 'COMPLETED' : isFailed ? 'FAILED' : isRejected ? 'REJECTED' : isGuestNotice ? 'GUEST MODE' : 'QUEUED'}
                     </span>
                     <QueueItemTimer item={item} />
                     <span className="motivation__queue-url" title={item.url}>
@@ -291,7 +317,7 @@ export default function Motivation() {
                   </div>
                   <button
                     type="button"
-                    className="motivation__queue-dismiss"
+                    className={`motivation__queue-dismiss${isPending || isProcessing ? ' motivation__queue-dismiss--cancel' : ''}`}
                     onClick={() => {
                       setDismissedCompleted((prev) => new Set(prev).add(item.id));
                       setRecentlyCompleted((prev) => {
@@ -302,10 +328,10 @@ export default function Motivation() {
                       });
                       dismissImportQueueItem(item.id, isGuest);
                     }}
-                    title="Dismiss"
-                    aria-label="Dismiss queue item"
+                    title={isPending || isProcessing ? "Cancel & remove from queue" : "Dismiss"}
+                    aria-label={isPending || isProcessing ? "Cancel queue item" : "Dismiss queue item"}
                   >
-                    ✕
+                    {isPending || isProcessing ? '✕ Cancel' : '✕ Dismiss'}
                   </button>
                 </div>
 
@@ -318,8 +344,10 @@ export default function Motivation() {
                     Ensure your local worker is active: <code>./scripts/start-llama-router.sh --listen</code>
                   </div>
                 )}
-                {isFailed && item.error && (
-                  <div className="motivation__queue-error">{item.error}</div>
+                {(isFailed || isRejected) && item.error && (
+                  <div className={isRejected ? "motivation__queue-rejection" : "motivation__queue-error"}>
+                    {item.error}
+                  </div>
                 )}
               </div>
             );

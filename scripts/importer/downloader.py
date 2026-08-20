@@ -10,7 +10,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
-from .config import error_log, log
+from .config import MAX_VIDEO_DURATION_SECONDS, ContentRejectionError, error_log, log
 
 try:
     import instaloader
@@ -102,6 +102,10 @@ def download_instagram(
 
     log(f"Fetching Instagram post {shortcode}...")
     post = instaloader.Post.from_shortcode(L.context, shortcode)
+    if post.is_video and post.video_duration and post.video_duration > MAX_VIDEO_DURATION_SECONDS:
+        raise ContentRejectionError(
+            f"Video duration ({post.video_duration:.0f}s) exceeds the 2-minute (120s) limit. Only short-form reels/shorts under 2m are supported."
+        )
     L.download_post(post, target=output_dir)
 
     def extract_slide_number(path: Path) -> int:
@@ -156,8 +160,15 @@ def download_youtube(url: str, output_dir: Path) -> Dict[str, Any]:
         "no_warnings": True,
     }
 
-    log(f"Downloading YouTube media from {url}...")
+    log(f"Fetching YouTube video metadata from {url}...")
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=False)
+        dur = info.get("duration")
+        if dur is not None and dur > MAX_VIDEO_DURATION_SECONDS:
+            raise ContentRejectionError(
+                f"Video duration ({dur:.0f}s) exceeds the 2-minute (120s) limit. Only short-form reels/shorts under 2m are supported."
+            )
+        log(f"Downloading YouTube media ({dur or 0:.0f}s)...")
         info = ydl.extract_info(url, download=True)
 
     author = info.get("uploader") or info.get("channel") or ""

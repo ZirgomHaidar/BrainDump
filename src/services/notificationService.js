@@ -187,11 +187,41 @@ export function calculatePendingTasks(items = [], weeklyItems = []) {
     return !i.done;
   }).length;
 
-  // Uncompleted items in today's weekly column
-  const todayDayIndex = (new Date().getDay() + 6) % 7; // Mon=0 .. Sun=6
-  const pendingWeekly = weeklyItems.filter(i => i.dayIndex === todayDayIndex && !i.done).length;
+  // Uncompleted items across the entire weekly plan
+  const pendingWeekly = weeklyItems.filter(i => !i.done).length;
 
   return pendingTodos + pendingWeekly;
+}
+
+export function getPendingTasksBreakdown(items = [], weeklyItems = []) {
+  const dailyTasks = items
+    .filter(i => (i.section === 'letgo' ? !i.crossedOut : !i.done))
+    .map(i => i.text?.trim())
+    .filter(Boolean);
+
+  const weeklyTasks = weeklyItems
+    .filter(i => !i.done)
+    .map(i => i.text?.trim())
+    .filter(Boolean);
+
+  return {
+    count: dailyTasks.length + weeklyTasks.length,
+    dailyTasks,
+    weeklyTasks,
+  };
+}
+
+export function formatPendingTasksBody(timeOfDay, dailyTasks = [], weeklyTasks = []) {
+  const parts = [];
+
+  if (dailyTasks.length > 0) {
+    parts.push(`Today (${dailyTasks.length}): ${dailyTasks.join(', ')}`);
+  }
+  if (weeklyTasks.length > 0) {
+    parts.push(`Weekly (${weeklyTasks.length}): ${weeklyTasks.join(', ')}`);
+  }
+
+  return parts.length > 0 ? parts.join(' • ') : 'No pending tasks remaining!';
 }
 
 export function calculateInactivityDays(activeDates = [], items = []) {
@@ -225,17 +255,28 @@ export function calculateWeeklySummary(items = [], weeklyItems = []) {
 
 // ── Trigger Specific Notification Types ───────────────────
 
-export async function triggerPendingTasksNotification(timeOfDay, count) {
-  let bodyText = `You have ${count} pending task${count === 1 ? '' : 's'} today.`;
-  if (timeOfDay === 'morning') {
-    bodyText += ' Morning focus: pick 1–3 to tackle.';
-  } else if (timeOfDay === 'afternoon') {
-    bodyText += ' Quick check-in for the afternoon.';
+export async function triggerPendingTasksNotification(timeOfDay, detailsOrCount) {
+  let title = 'BRAINDUMP · Pending Tasks';
+  if (timeOfDay === 'morning') title = 'BRAINDUMP · Morning Focus';
+  else if (timeOfDay === 'afternoon') title = 'BRAINDUMP · Afternoon Check-in';
+  else if (timeOfDay === 'evening') title = 'BRAINDUMP · Evening Wrap-up';
+
+  let bodyText = '';
+  if (detailsOrCount && typeof detailsOrCount === 'object') {
+    bodyText = formatPendingTasksBody(timeOfDay, detailsOrCount.dailyTasks, detailsOrCount.weeklyTasks);
   } else {
-    bodyText += ' Wrap up or roll over to tomorrow.';
+    const count = Number(detailsOrCount) || 1;
+    bodyText = `You have ${count} pending task${count === 1 ? '' : 's'}.`;
+    if (timeOfDay === 'morning') {
+      bodyText += ' Pick 1–3 to tackle.';
+    } else if (timeOfDay === 'afternoon') {
+      bodyText += ' Review your progress.';
+    } else {
+      bodyText += ' Wrap up or roll over to tomorrow.';
+    }
   }
 
-  return sendNotification('BRAINDUMP · Pending Tasks', {
+  return sendNotification(title, {
     body: bodyText,
     tag: `bd-pending-${timeOfDay}`,
   });

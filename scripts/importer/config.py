@@ -29,12 +29,35 @@ MODEL_CONTEXT_LIMITS: Dict[str, int] = {
 
 VALID_CATEGORIES = {"motivation", "lesson", "principle", "experience"}
 
+# ── Processing & Guardrail Limits ──────────────────────────────────
+MAX_VIDEO_DURATION_SECONDS = 120.0  # Hard limit: 2 minutes for reels/shorts
+MAX_KEYFRAMES_COUNT = 60            # Maximum keyframes to protect context budget
+
+
+class ContentRejectionError(Exception):
+    """Raised when media is rejected due to duration limit or relevance guardrail."""
+    pass
+
 # ── Category Classification Criteria ───────────────────────────────
 CATEGORY_CRITERIA_TEXT = """CATEGORY CLASSIFICATION CRITERIA (Choose exactly ONE):
 - 'motivation': Energy, drive, discipline, grit, taking immediate action, urgency, ambition, performing under pressure (e.g. "Pressure changes everything", "Just start today", "Ugly action beats perfection").
 - 'principle': Universal codes of conduct, ethical contrasts, timeless mental models, rules to live by (e.g. "Pride says... Wisdom says...", "Help others shine, but never dim your own glow").
 - 'lesson': Realizations gained from learning curves, reframing mistakes or failure, counter-intuitive truths (e.g. "There is no secret ingredient", "If you focus on the past, you won’t see what lies ahead").
 - 'experience': First-person personal reflections, self-comparison, inner journey, subjective lived mindset using 'I', 'me', 'my' (e.g. "The only rival I have is who I was last year", "I don't care who's doing better than me")."""
+
+# ── Relevance Guardrail Criteria ───────────────────────────────────
+RELEVANCE_DIRECTIVES = """RELEVANCE GUARDRAIL & CONTENT VERIFICATION:
+Verify that the media genuinely relates to at least one of the 4 BrainDump categories (motivation, principle, lesson, experience).
+DISQUALIFIED / UNRELATED CONTENT (Set 'is_relevant': false):
+- Gaming clips / video game streams / gameplay walkthroughs
+- Cooking recipes / food preparation / baking tutorials
+- Dance trends / lip-sync memes / comedy skits / slapstick
+- Product advertisements / commercial pitches / unboxings / affiliate promos
+- Everyday casual vlogs, celebrity gossip, or lifestyle footage devoid of deeper life wisdom
+
+If the media lacks philosophical wisdom, self-mastery, discipline, or growth mindset:
+Set "is_relevant": false, "rejection_reason": "Specific explanation of why this content was rejected", "text": ""
+DO NOT fabricate, hallucinate, or force a fake principle if the media does not actually express one."""
 
 
 # ── Logging Helpers ────────────────────────────────────────────────
@@ -58,11 +81,13 @@ DEFAULT_SYSTEM_INSTRUCTION = (
     "   - 'In this clip...'\n"
     "   - 'The author / speaker argues...'\n"
     "   START IMMEDIATELY with the words of the message or quote itself.\n"
-    "3. DEDUPLICATION: If an ending phrase repeats across multiple consecutive frames, include it only ONCE at the end.\n"
-    "4. FALLBACK ONLY: Only if the media has NO on-screen text, quotes, or dialogue, state the underlying principle directly in 1st/2nd person ('Help others shine, but never dim your own glow.').\n\n"
+    "3. DEDUPLICATION: If an ending phrase repeats across multiple consecutive frames, include it only ONCE at the end.\n\n"
+    f"{RELEVANCE_DIRECTIVES}\n\n"
     f"{CATEGORY_CRITERIA_TEXT}\n\n"
-    "5. OUTPUT STRICT VALID JSON ONLY:\n"
+    "OUTPUT STRICT VALID JSON ONLY:\n"
     "{\n"
+    '  "is_relevant": true,\n'
+    '  "rejection_reason": "",\n'
     '  "text": "The exact on-screen words/quote or direct principle",\n'
     '  "category": "motivation" | "principle" | "lesson" | "experience",\n'
     '  "author": "Creator or speaker handle/name"\n'
@@ -129,10 +154,17 @@ def build_video_stage2_prompt(
         f"2. DEDUPLICATE REPETITIONS & STUTTERS: Eliminate stuttered words or echo repetitions (e.g. 'Pressure changes everything. Pressure.' -> 'Pressure changes everything.'). If dialogue states a concept and then repeats it rhetorically, retain the cleanest, punchiest form.\n"
         f"3. PRESERVE COMPLETE WISDOM: Preserve the full sequence of rules, contrast pairs, or lessons in full rather than discarding lines.\n"
         f"4. LINE BREAK FORMATTING: Put each distinct statement, contrast pair, or thought on its own line using newline characters ('\\n'). Separate thought transitions with an empty line ('\\n\\n'). DO NOT output a single dense, unpunctuated wall of text. DO NOT use bullet points (no '•', no '-', no '*').\n"
-        f"5. NO THIRD-PERSON SUMMARIES OR META-TALK: Start immediately with the actual words of the quote.\n"
-        f"6. CATEGORY CLASSIFICATION:\n"
-        f"{CATEGORY_CRITERIA_TEXT}\n"
-        f"7. Return strict JSON with fields: 'text', 'category', 'author'."
+        f"5. NO THIRD-PERSON SUMMARIES OR META-TALK: Start immediately with the actual words of the quote.\n\n"
+        f"{RELEVANCE_DIRECTIVES}\n\n"
+        f"{CATEGORY_CRITERIA_TEXT}\n\n"
+        f"OUTPUT STRICT VALID JSON ONLY:\n"
+        f"{{\n"
+        f'  "is_relevant": true,\n'
+        f'  "rejection_reason": "",\n'
+        f'  "text": "The exact quote/wisdom with clean line breaks",\n'
+        f'  "category": "motivation" | "principle" | "lesson" | "experience",\n'
+        f'  "author": "{author}"\n'
+        f"}}"
     )
 
 
@@ -150,10 +182,17 @@ def build_carousel_stage2_prompt(
         f"   - Empty Line (double newline '\\n\\n').\n"
         f"   - Clean Lines: Put each core takeaway, quote, or rule on its own separate line using newline characters ('\\n'). DO NOT use bullet points (no '•', no '-', no '*'). Just clean, separate lines.\n"
         f"2. DO NOT output as a single continuous paragraph or wall of text. YOU MUST USE CLEAN NEWLINES BETWEEN POINTS.\n"
-        f"3. NO THIRD-PERSON SUMMARIES OR META-TALK: Never say 'This carousel shows...' or 'The author explains...'. Start directly with the headline.\n"
-        f"4. CATEGORY CLASSIFICATION:\n"
-        f"{CATEGORY_CRITERIA_TEXT}\n"
-        f"5. Return strict JSON with fields: 'text', 'category', 'author'."
+        f"3. NO THIRD-PERSON SUMMARIES OR META-TALK: Never say 'This carousel shows...' or 'The author explains...'. Start directly with the headline.\n\n"
+        f"{RELEVANCE_DIRECTIVES}\n\n"
+        f"{CATEGORY_CRITERIA_TEXT}\n\n"
+        f"OUTPUT STRICT VALID JSON ONLY:\n"
+        f"{{\n"
+        f'  "is_relevant": true,\n'
+        f'  "rejection_reason": "",\n'
+        f'  "text": "The structured carousel wisdom",\n'
+        f'  "category": "motivation" | "principle" | "lesson" | "experience",\n'
+        f'  "author": "{author}"\n'
+        f"}}"
     )
 
 
@@ -168,10 +207,17 @@ def build_image_stage2_prompt(
         f"DIRECTIVES:\n"
         f"1. Extract the core quote, principle, or wisdom directly from the image text and caption.\n"
         f"2. If the image contains multiple rules, contrasts, or points, preserve them all with line breaks ('\\n').\n"
-        f"3. NO THIRD-PERSON SUMMARIES OR META-TALK: Start directly with the actual message.\n"
-        f"4. CATEGORY CLASSIFICATION:\n"
-        f"{CATEGORY_CRITERIA_TEXT}\n"
-        f"5. Return strict JSON with fields: 'text', 'category', 'author'."
+        f"3. NO THIRD-PERSON SUMMARIES OR META-TALK: Start directly with the actual message.\n\n"
+        f"{RELEVANCE_DIRECTIVES}\n\n"
+        f"{CATEGORY_CRITERIA_TEXT}\n\n"
+        f"OUTPUT STRICT VALID JSON ONLY:\n"
+        f"{{\n"
+        f'  "is_relevant": true,\n'
+        f'  "rejection_reason": "",\n'
+        f'  "text": "The exact quote/wisdom",\n'
+        f'  "category": "motivation" | "principle" | "lesson" | "experience",\n'
+        f'  "author": "{author}"\n'
+        f"}}"
     )
 
 
@@ -182,8 +228,15 @@ def build_text_prompt(platform: str, author: str, transcript: str) -> str:
         f"Post Text / Transcript:\n{transcript}\n\n"
         f"DIRECTIVES:\n"
         f"1. Extract the direct quote, lesson, or principle without third-person meta-commentary.\n"
-        f"2. Line break formatting: Put distinct thoughts on separate lines ('\\n'). DO NOT use bullet points.\n"
-        f"3. CATEGORY CLASSIFICATION:\n"
-        f"{CATEGORY_CRITERIA_TEXT}\n"
-        f"4. Return strict JSON with fields: 'text', 'category', 'author'."
+        f"2. Line break formatting: Put distinct thoughts on separate lines ('\\n'). DO NOT use bullet points.\n\n"
+        f"{RELEVANCE_DIRECTIVES}\n\n"
+        f"{CATEGORY_CRITERIA_TEXT}\n\n"
+        f"OUTPUT STRICT VALID JSON ONLY:\n"
+        f"{{\n"
+        f'  "is_relevant": true,\n'
+        f'  "rejection_reason": "",\n'
+        f'  "text": "The direct quote/wisdom",\n'
+        f'  "category": "motivation" | "principle" | "lesson" | "experience",\n'
+        f'  "author": "{author}"\n'
+        f"}}"
     )

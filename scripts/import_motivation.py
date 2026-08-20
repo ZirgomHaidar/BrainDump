@@ -26,6 +26,7 @@ from importer import (  # noqa: F401
     clean_quote_text,
     clean_vtt_subtitles,
     clear_llm_context,
+    clear_queue_jobs,
     compute_token_metrics,
     detect_platform,
     download_instagram,
@@ -35,16 +36,20 @@ from importer import (  # noqa: F401
     get_firestore_client,
     get_parakeet_model_path,
     get_video_duration,
+    is_server_alive,
+    list_queue_jobs,
     log,
     process_carousel,
     process_image,
     process_text,
     process_url,
     process_video,
+    remove_queue_job,
     run_listener_loop,
     sample_keyframes,
     save_reflection,
     transcribe_video_audio,
+    wait_for_server,
 )
 
 
@@ -92,8 +97,36 @@ def main():
         action="store_true",
         help="Preserve temporary downloaded media files for inspection.",
     )
+    parser.add_argument(
+        "--list-queue",
+        action="store_true",
+        help="List all jobs currently in the Firestore importQueue.",
+    )
+    parser.add_argument(
+        "--clear-queue",
+        action="store_true",
+        help="Delete all pending jobs from the Firestore importQueue.",
+    )
+    parser.add_argument(
+        "--remove-queue",
+        type=str,
+        metavar="JOB_ID",
+        help="Delete a specific job from importQueue by document ID.",
+    )
 
     args = parser.parse_args()
+
+    if args.list_queue:
+        list_queue_jobs()
+        return
+
+    if args.clear_queue:
+        clear_queue_jobs(pending_only=True)
+        return
+
+    if args.remove_queue:
+        remove_queue_job(args.remove_queue)
+        return
 
     if args.listen:
         run_listener_loop(

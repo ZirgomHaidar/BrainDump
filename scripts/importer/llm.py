@@ -74,6 +74,57 @@ def clean_quote_text(text: str) -> str:
     return t.strip(" *\"'\n\r")
 
 
+# ── Server Health & Liveness ──────────────────────────────────────
+def is_server_alive(server_url: str = DEFAULT_ROUTER_URL, timeout: float = 2.0) -> bool:
+    """Checks whether the llama-server router is reachable and responding."""
+    base = server_url.rstrip("/")
+    for probe_path in ("/health", "/v1/models"):
+        try:
+            resp = requests.get(f"{base}{probe_path}", timeout=timeout)
+            if resp.status_code == 200:
+                return True
+        except Exception:
+            pass
+    return False
+
+
+def wait_for_server(
+    server_url: str = DEFAULT_ROUTER_URL,
+    poll_interval: float = 3.0,
+    max_wait_seconds: Optional[float] = None,
+    progress_callback: Optional[Any] = None,
+) -> bool:
+    """
+    Blocks until llama-server router is alive and responding.
+    Returns True when alive, or False if max_wait_seconds is exceeded.
+    """
+    if is_server_alive(server_url):
+        return True
+
+    log(f"llama-server at {server_url} is currently offline. Waiting for server to come alive...", prefix="⏳")
+    if progress_callback:
+        progress_callback("Waiting for local AI server to come online...")
+
+    t0 = time.time()
+    logged_wait = False
+
+    while True:
+        if is_server_alive(server_url):
+            log(f"llama-server at {server_url} is active and ready! Resuming processing.", prefix="🚀")
+            return True
+
+        elapsed = time.time() - t0
+        if max_wait_seconds and elapsed >= max_wait_seconds:
+            error_log(f"Timed out after {max_wait_seconds}s waiting for llama-server at {server_url}.")
+            return False
+
+        if not logged_wait and elapsed >= 10:
+            log(f"Still waiting for llama-server ({elapsed:.0f}s elapsed)... Start it with: ./scripts/start-llama-router.sh", prefix="ℹ️")
+            logged_wait = True
+
+        time.sleep(poll_interval)
+
+
 # ── KV Context Clearing ───────────────────────────────────────────
 def clear_llm_context(server_url: str, model_name: str) -> None:
     """
@@ -173,11 +224,20 @@ def call_llama_router(
 
     log(f"Dispatching inference to llama-server router [model: {model_name}]...")
     t0 = time.time()
-    try:
-        resp = requests.post(endpoint, json=payload, timeout=600)
-    except requests.exceptions.RequestException as e:
-        error_log(f"llama-server connection error: {e}")
-        raise RuntimeError(f"Could not connect to llama-server router at {server_url}: {e}")
+    resp = None
+    max_retries = 3
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            resp = requests.post(endpoint, json=payload, timeout=600)
+            break
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries:
+                log(f"Connection to llama-server failed ({e}). Waiting for server to become available (attempt {attempt}/{max_retries})...", prefix="⚠️")
+                wait_for_server(server_url, poll_interval=3.0, max_wait_seconds=120)
+            else:
+                error_log(f"llama-server connection error after {max_retries} attempts: {e}")
+                raise RuntimeError(f"Could not connect to llama-server router at {server_url}: {e}")
 
     t_infer = round(time.time() - t0, 1)
 

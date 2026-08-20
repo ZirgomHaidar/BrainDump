@@ -540,5 +540,187 @@
         "num_frames": 54
       }
     }
+  },
+  {
+    "text": "Discipline your thoughts.\nStop thinking too much.\nDon't go into the past.\nDon't go into the future.\nBe in the present.",
+    "category": "principle",
+    "author": "viatwenty2",
+    "createdAt": "2026-09-26T03:00:48.711697+00:00",
+    "sourceUrl": "https://www.instagram.com/reel/DUieJX4k04B/",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 8135,
+      "stage2_tokens": 2610,
+      "total_tokens": 10745,
+      "ctx_limit": 64128,
+      "ctx_percent": 16.76,
+      "prompt_tokens": 9688,
+      "completion_tokens": 1057,
+      "speed": 49.8,
+      "duration_seconds": 75.4,
+      "duration_formatted": "1m 15s",
+      "breakdown": {
+        "total_seconds": 75.4,
+        "total_formatted": "1m 15s",
+        "download_seconds": 8.3,
+        "audio_seconds": 1.08,
+        "keyframes_seconds": 0.3,
+        "stage1_seconds": 50.5,
+        "stage2_seconds": 13.5,
+        "num_frames": 38
+      }
+    }
+  },
+  {
+    "text": "Just give me under a minute and I'll change the way you look at your life.\nJust listen.\nMotivation isn't given.\nIt's built through consistent action.\nIt's not something you're born with.\nIt's the reward you get from making consistent progress over time.\nYou don't get inspired without first doing the work.\nEvery single second you waste waiting for motivation to strike, you lose the opportunity to build your dream.\nYou don't need motivation.\nWhat you need is discipline.\nThe truth is, motion always beats motivation.\nStop waiting to feel ready for a moment that'll never arrive because you've never leveled up while you were drifting on autopilot.\nSTOP WAITING\nto make the right decision.\nMake the decision, then make it right.\nSubscribe for change",
+    "category": "motivation",
+    "author": "Dan Martell",
+    "createdAt": "2026-09-26T10:23:10.658880+00:00",
+    "sourceUrl": "https://youtu.be/r6zFZQm0hcc",
+    "sourcePlatform": "youtube",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 11804,
+      "stage2_tokens": 3292,
+      "total_tokens": 15096,
+      "ctx_limit": 64128,
+      "ctx_percent": 23.54,
+      "prompt_tokens": 13169,
+      "completion_tokens": 1927,
+      "speed": 54.1,
+      "duration_seconds": 121.7,
+      "duration_formatted": "2m 1s",
+      "breakdown": {
+        "total_seconds": 121.7,
+        "total_formatted": "2m 1s",
+        "download_seconds": 9.9,
+        "audio_seconds": 1.86,
+        "keyframes_seconds": 1.0,
+        "stage1_seconds": 88.2,
+        "stage2_seconds": 18.0,
+        "num_frames": 60
+      }
+    }
+  },
+  {
+    "text": "Imagine you're driving a car...\nOkay...\nYou're trying to find an address, but the music is playing loudly. What do you do?\nI turn it down.\nWhy?\nSo I can focus\nBut are you searching with your ears?\nNo. With my eyes.\nThen why does silence help you see?\nBecause my brain has less to process.\nSo sound can hide something directly in front of you... without covering it?\nI guess it can.\nWhat happens when every quiet moment of your life gets filled?\nFilled with what?\nMusic. Notifications. Videos. Podcasts. Other people's thoughts.\nMy brain never stops processing.\nAnd if one song can hide an entire street from you....\nWhat would I notice if I lowered everything else?\nThe life you thought had become boring.\nIt was never empty. I was just too distracted to see it.",
+    "category": "lesson",
+    "author": "zacharylaid",
+    "createdAt": "2026-09-26T07:07:19.892289+00:00",
+    "sourceUrl": "https://www.instagram.com/p/DdlJg0lFG8-",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 14835,
+      "stage2_tokens": 2867,
+      "total_tokens": 17702,
+      "ctx_limit": 64128,
+      "ctx_percent": 27.6,
+      "prompt_tokens": 14981,
+      "completion_tokens": 2721,
+      "speed": 53.2,
+      "duration_seconds": 137.4,
+      "duration_formatted": "2m 17s",
+      "breakdown": {
+        "total_seconds": 137.4,
+        "total_formatted": "2m 17s",
+        "download_seconds": 3.7,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 112.7,
+        "stage2_seconds": 19.9,
+        "num_slides": 20
+      }
+    }
+  },
+  {
+    "text": "MY QUESTION FOR YOU IS REALLY SIMPLE.\nIs an airplane safer on the ground or in the air?\nOn the ground obviously\nBut what is it’s purpose?\nUhh, to fly?\nA plane that never takes off never crashes, but it also never gets anywhere.\nYou are that plane.\nPlaying life safe can be one of the riskiest moves you’ll ever make.\nEvery day you stay parked is a day you’re not where you’re supposed to be.\nYou are the one who decides whether to stay grounded, or take off.",
+    "category": "principle",
+    "author": "zacharylaid",
+    "createdAt": "2026-09-26T10:18:35.982130+00:00",
+    "sourceUrl": "https://www.instagram.com/p/DdqMPvkEX7j/",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 8259,
+      "stage2_tokens": 2436,
+      "total_tokens": 10695,
+      "ctx_limit": 64128,
+      "ctx_percent": 16.68,
+      "prompt_tokens": 8293,
+      "completion_tokens": 2402,
+      "speed": 54.1,
+      "duration_seconds": 127.1,
+      "duration_formatted": "2m 7s",
+      "breakdown": {
+        "total_seconds": 127.1,
+        "total_formatted": "2m 7s",
+        "download_seconds": 20.7,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 89.6,
+        "stage2_seconds": 14.7,
+        "num_slides": 10
+      }
+    }
+  },
+  {
+    "text": "Imagine your phone is fully charged in the morning...\nOkay..\nBut by noon, the battery is almost dead even though you barely used it.\nI’d check what drained it\nAnd what would your phone show you?\nWhich apps used the most battery.\nEven the ones you never opened?\nYes. Some keep running in the background.\nSo something doesn’t need to be on your screen to consume battery?\nNo. It just has to remain open in the background.\nThe screen turns off.\nAnd the background apps don’t automatically close?\nNo.\nThen why do you expect sleep to close everything still running inside you?\nWhat’s still running?\nThe conversation you keep replaying.\nThe decision you keep avoiding.\nThe ending you never accepted.\nSo maybe I’m not tired because I’ve done too much..\n...but because too much inside me never ended.",
+    "category": "lesson",
+    "author": "zacharylaid",
+    "createdAt": "2026-09-26T10:21:00.811213+00:00",
+    "sourceUrl": "https://www.instagram.com/p/DdnuYfWE8Cf/",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 14875,
+      "stage2_tokens": 2860,
+      "total_tokens": 17735,
+      "ctx_limit": 64128,
+      "ctx_percent": 27.66,
+      "prompt_tokens": 14961,
+      "completion_tokens": 2774,
+      "speed": 56.4,
+      "duration_seconds": 140.2,
+      "duration_formatted": "2m 20s",
+      "breakdown": {
+        "total_seconds": 140.2,
+        "total_formatted": "2m 20s",
+        "download_seconds": 4.7,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 115.4,
+        "stage2_seconds": 19.0,
+        "num_slides": 20
+      }
+    }
+  },
+  {
+    "text": "You don't need a completely new life.\nYou need to take your life back.\nStop feeding habits that leave you drained.\nStop scrolling when you know you should be building.\nStop breaking promises you made to yourself.\nStop looking for confidence in other people's approval.\nStop wasting your energy on things that give you nothing back.\nStart putting that energy somewhere meaningful.\nBuild your body.\nNot because you hate how you look, but because you respect what you're capable of becoming.\nBuild your focus.\nNot because the world demands more from you, but because your dreams deserve your full attention.\nKeep your promises.\nYou say you'll train — you train.\nYou say you'll study — you study.\nYou say you'll change — you take the next step.\nYou fall off — you get back on.\nStart today.\nNot tomorrow.\nNot Monday.\nNot when you feel motivated.\nToday.\nYou don't need to become perfect.\nYou just need to stop abandoning yourself.",
+    "category": "motivation",
+    "author": "thought.minds",
+    "createdAt": "2026-10-04T15:32:54.324872+00:00",
+    "sourceUrl": "https://www.instagram.com/p/DeEAETOEs3M/",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 7036,
+      "stage2_tokens": 2901,
+      "total_tokens": 9937,
+      "ctx_limit": 64128,
+      "ctx_percent": 15.5,
+      "prompt_tokens": 6453,
+      "completion_tokens": 3484,
+      "speed": 51.5,
+      "duration_seconds": 137.8,
+      "duration_formatted": "2m 17s",
+      "breakdown": {
+        "total_seconds": 137.8,
+        "total_formatted": "2m 17s",
+        "download_seconds": 7.3,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 106.5,
+        "stage2_seconds": 19.1,
+        "num_slides": 6
+      }
+    }
   }
 ]

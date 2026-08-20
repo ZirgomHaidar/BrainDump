@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates } from './services/storageAdapter';
+import { useEffect, useRef, useState, useMemo } from 'react';
+import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates, subscribeToWeeklyItems } from './services/storageAdapter';
 import { useAuth } from './hooks/useAuth';
 import { isBannerDismissed } from './services/guestStorage';
 import Section from './components/Section';
@@ -30,10 +30,28 @@ const toLocalDateStr = (d) => {
 };
 const todayStr = () => toLocalDateStr(new Date());
 
+const getWeekMonday = (date) => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d;
+};
+
+const toWeekStr = (monday) => {
+  const d = new Date(monday);
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  const weekNum = 1 + Math.round(((d - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+  return `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+};
+
 export default function App() {
   const { isGuest, showMigration, setShowMigration, signIn, signOut, exitGuest } = useAuth();
   const [activeTab, setActiveTab] = useState('weekly');
   const [items, setItems]   = useState([]);
+  const [weeklyItems, setWeeklyItems] = useState([]);
   const [syncing, setSyncing] = useState(false);
   const [error, setError]   = useState(null);
   const [selectedDate, setSelectedDate] = useState(todayStr);
@@ -44,6 +62,12 @@ export default function App() {
   const [notifEnabled, setNotifEnabled] = useState(() => getNotificationSettings().enabled);
   const [bannerDismissed, setBannerDismissed] = useState(() => isBannerDismissed());
   const topBarRef = useRef(null);
+
+  const currentWeekStr = useMemo(() => toWeekStr(getWeekMonday(new Date())), []);
+
+  useEffect(() => {
+    return subscribeToWeeklyItems(currentWeekStr, setWeeklyItems, isGuest);
+  }, [currentWeekStr, isGuest]);
 
   useNotificationScheduler(activeDates);
 
@@ -260,6 +284,7 @@ export default function App() {
           setNotifEnabled(getNotificationSettings().enabled);
         }}
         items={items}
+        weeklyItems={weeklyItems}
         isGuest={isGuest}
       />
 

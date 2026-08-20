@@ -127,3 +127,10 @@ export function dismissImportQueueItem(id, isGuest) {
   }
   return fb.dismissImportQueueItem(id);
 }
+
+export function clearPendingImportQueue(isGuest) {
+  if (isGuest) {
+    return guest.guestClearPendingImportQueue();
+  }
+  return fb.clearPendingImportQueue();
+}

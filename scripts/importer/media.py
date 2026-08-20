@@ -13,7 +13,7 @@ import time
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from .config import PROJECT_ROOT, error_log, log
+from .config import MAX_KEYFRAMES_COUNT, PROJECT_ROOT, error_log, log
 
 
 # ── Video Duration ─────────────────────────────────────────────────
@@ -75,10 +75,10 @@ def sample_keyframes(
 
         frame_files = sorted(list(temp_frame_dir.glob("frame_*.jpg")))
 
-        # Clamp between 10 frames and 180 frames (safe for 64k context)
-        if len(frame_files) > 180:
-            step = len(frame_files) / 180
-            indices = [int(i * step) for i in range(180)]
+        # Clamp to MAX_KEYFRAMES_COUNT (safe for context budget)
+        if len(frame_files) > MAX_KEYFRAMES_COUNT:
+            step = len(frame_files) / MAX_KEYFRAMES_COUNT
+            indices = [int(i * step) for i in range(MAX_KEYFRAMES_COUNT)]
             frame_files = [frame_files[i] for i in indices]
 
         for ff in frame_files:
