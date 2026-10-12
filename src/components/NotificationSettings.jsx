@@ -130,12 +130,7 @@ export default function NotificationSettings({ isOpen, onClose, items = [], week
   // ── Test Triggers ───────────────────────────────────────
   const testPendingTasks = () => ensurePermissionAndSend(() => {
     const details = getPendingTasksBreakdown(items, weeklyItems);
-    const testDetails = details.count > 0 ? details : {
-      count: 3,
-      dailyTasks: ['Review daily priorities', 'Clear mind clutter'],
-      weeklyTasks: ['Weekly project milestone'],
-    };
-    return triggerPendingTasksNotification('morning', testDetails);
+    return triggerPendingTasksNotification('morning', details);
   });
 
   const testGentleReminder = () => ensurePermissionAndSend(() => {
@@ -246,9 +241,9 @@ export default function NotificationSettings({ isOpen, onClose, items = [], week
           {/* Rule 1: Pending Tasks */}
           <div className="notif-modal__item">
             <div className="notif-modal__item-info">
-              <div className="notif-modal__item-title">1. Pending Daily & Weekly Tasks</div>
+              <div className="notif-modal__item-title">1. Pending Weekly Tasks</div>
               <div className="notif-modal__item-desc">
-                Daily summaries at <strong>08:00</strong>, <strong>12:30</strong>, and <strong>17:00</strong> with uncompleted daily tasks and weekly plan entries.
+                Summaries at <strong>08:00</strong>, <strong>12:30</strong>, and <strong>17:00</strong> with uncompleted weekly plan entries.
               </div>
             </div>
             <div className="notif-modal__item-actions">

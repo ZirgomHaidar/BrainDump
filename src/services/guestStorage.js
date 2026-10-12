@@ -361,6 +361,19 @@ export function guestSubscribeToWeeklyItems(weekStr, callback) {
   return () => listeners.weekly.delete(run);
 }
 
+export function guestSubscribeToPendingWeeklyItems(currentWeekStr, callback) {
+  const run = () => {
+    const all = getRaw(GUEST_WEEKLY_KEY, []);
+    const matching = all
+      .filter((w) => !w.done && (!w.weekStr || w.weekStr <= currentWeekStr))
+      .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+    callback(matching);
+  };
+  run();
+  listeners.weekly.add(run);
+  return () => listeners.weekly.delete(run);
+}
+
 export function guestSubscribeToActiveWeeks(callback) {
   const run = () => {
     const all = getRaw(GUEST_WEEKLY_KEY, []);

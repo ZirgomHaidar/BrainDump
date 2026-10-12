@@ -77,6 +77,13 @@ export function subscribeToWeeklyItems(weekStr, callback, isGuest) {
   return fb.subscribeToWeeklyItems(weekStr, callback);
 }
 
+export function subscribeToPendingWeeklyItems(currentWeekStr, callback, isGuest) {
+  if (isGuest) {
+    return guest.guestSubscribeToPendingWeeklyItems(currentWeekStr, callback);
+  }
+  return fb.subscribeToPendingWeeklyItems(currentWeekStr, callback);
+}
+
 export function subscribeToActiveWeeks(callback, isGuest) {
   if (isGuest) {
     return guest.guestSubscribeToActiveWeeks(callback);

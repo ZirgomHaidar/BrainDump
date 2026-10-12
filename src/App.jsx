@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates, subscribeToWeeklyItems } from './services/storageAdapter';
+import { addItem, deleteItem, updateItem, subscribeToItems, subscribeToActiveDates, subscribeToPendingWeeklyItems } from './services/storageAdapter';
 import { useAuth } from './hooks/useAuth';
 import { isBannerDismissed } from './services/guestStorage';
 import Section from './components/Section';
@@ -66,7 +66,7 @@ export default function App() {
   const currentWeekStr = useMemo(() => toWeekStr(getWeekMonday(new Date())), []);
 
   useEffect(() => {
-    return subscribeToWeeklyItems(currentWeekStr, setWeeklyItems, isGuest);
+    return subscribeToPendingWeeklyItems(currentWeekStr, setWeeklyItems, isGuest);
   }, [currentWeekStr, isGuest]);
 
   useNotificationScheduler(activeDates);
