@@ -189,7 +189,7 @@ async function runCron() {
           if (details.count <= 0) return null;
           return {
             title: 'BRAINDUMP · Morning Focus',
-            body: formatPendingTasksBody('morning', details.dailyTasks, details.weeklyTasks),
+            body: formatPendingTasksBody('morning', details.weeklyTasks),
             tag: 'bd-pending-morning',
           };
         }
@@ -203,7 +203,7 @@ async function runCron() {
           if (details.count <= 0) return null;
           return {
             title: 'BRAINDUMP · Afternoon Check-in',
-            body: formatPendingTasksBody('afternoon', details.dailyTasks, details.weeklyTasks),
+            body: formatPendingTasksBody('afternoon', details.weeklyTasks),
             tag: 'bd-pending-afternoon',
           };
         }
@@ -217,7 +217,7 @@ async function runCron() {
           if (details.count <= 0) return null;
           return {
             title: 'BRAINDUMP · Evening Wrap-up',
-            body: formatPendingTasksBody('evening', details.dailyTasks, details.weeklyTasks),
+            body: formatPendingTasksBody('evening', details.weeklyTasks),
             tag: 'bd-pending-evening',
           };
         }
@@ -357,50 +357,40 @@ async function markDispatched(docRef, slotRecordKey, existingDispatched = {}) {
 
 // ── 5. Firestore Task Calculators ─────────────────────────────────
 
-function formatPendingTasksBody(period, dailyTasks = [], weeklyTasks = []) {
-  const parts = [];
+function formatPendingTasksBody(period, dailyOrWeeklyTasks = [], maybeWeeklyTasks = []) {
+  const weeklyTasks = Array.isArray(maybeWeeklyTasks) && maybeWeeklyTasks.length > 0
+    ? maybeWeeklyTasks
+    : (Array.isArray(dailyOrWeeklyTasks) ? dailyOrWeeklyTasks : []);
 
-  if (dailyTasks.length > 0) {
-    parts.push(`Today (${dailyTasks.length}): ${dailyTasks.join(', ')}`);
-  }
-  if (weeklyTasks.length > 0) {
-    parts.push(`Weekly (${weeklyTasks.length}): ${weeklyTasks.join(', ')}`);
+  const pendingList = weeklyTasks.filter(Boolean);
+
+  if (pendingList.length === 0) {
+    return 'No pending weekly tasks remaining!';
   }
 
-  return parts.length > 0 ? parts.join(' • ') : 'No pending tasks remaining!';
+  const list = pendingList.map(t => `• ${t}`).join('\n');
+  return `Weekly (${pendingList.length}):\n${list}`;
 }
 
 async function getPendingTasksDetails(dateStr, currentWeekStr) {
   try {
-    // 1. Daily items
-    const itemsSnap = await db.collection('items').where('date', '==', dateStr).get();
-    const dailyTasks = [];
-    itemsSnap.forEach(d => {
-      const item = d.data();
-      const isPending = item.section === 'letgo' ? !item.crossedOut : !item.done;
-      if (isPending && item.text?.trim()) {
-        dailyTasks.push(item.text.trim());
-      }
-    });
-
-    // 2. All pending weekly items for the entire current week
-    const weeklySnap = await db.collection('weeklyItems').where('weekStr', '==', currentWeekStr).get();
+    // Only pending weekly items up to the current week that are not marked finished
+    const weeklySnap = await db.collection('weeklyItems').where('done', '==', false).get();
     const weeklyTasks = [];
     weeklySnap.forEach(d => {
       const item = d.data();
-      if (!item.done && item.text?.trim()) {
+      if ((!item.weekStr || item.weekStr <= currentWeekStr) && item.text?.trim()) {
         weeklyTasks.push(item.text.trim());
       }
     });
 
     return {
-      count: dailyTasks.length + weeklyTasks.length,
-      dailyTasks,
+      count: weeklyTasks.length,
       weeklyTasks,
     };
   } catch (err) {
     console.error('Error calculating pending tasks:', err.message);
-    return { count: 0, dailyTasks: [], weeklyTasks: [] };
+    return { count: 0, weeklyTasks: [] };
   }
 }
 

@@ -181,47 +181,35 @@ export async function sendNotification(title, options = {}) {
 // ── Notification Content Generators & Calculations ────────
 
 export function calculatePendingTasks(items = [], weeklyItems = []) {
-  // Uncompleted items in today's Brain Dump (excluding letgo crossedOut items)
-  const pendingTodos = items.filter(i => {
-    if (i.section === 'letgo') return !i.crossedOut;
-    return !i.done;
-  }).length;
-
-  // Uncompleted items across the entire weekly plan
-  const pendingWeekly = weeklyItems.filter(i => !i.done).length;
-
-  return pendingTodos + pendingWeekly;
+  // Only uncompleted items across the weekly plan
+  return weeklyItems.filter(i => !i.done).length;
 }
 
 export function getPendingTasksBreakdown(items = [], weeklyItems = []) {
-  const dailyTasks = items
-    .filter(i => (i.section === 'letgo' ? !i.crossedOut : !i.done))
-    .map(i => i.text?.trim())
-    .filter(Boolean);
-
   const weeklyTasks = weeklyItems
     .filter(i => !i.done)
     .map(i => i.text?.trim())
     .filter(Boolean);
 
   return {
-    count: dailyTasks.length + weeklyTasks.length,
-    dailyTasks,
+    count: weeklyTasks.length,
     weeklyTasks,
   };
 }
 
-export function formatPendingTasksBody(timeOfDay, dailyTasks = [], weeklyTasks = []) {
-  const parts = [];
+export function formatPendingTasksBody(timeOfDay, dailyOrWeeklyTasks = [], maybeWeeklyTasks = []) {
+  const weeklyTasks = Array.isArray(maybeWeeklyTasks) && maybeWeeklyTasks.length > 0
+    ? maybeWeeklyTasks
+    : (Array.isArray(dailyOrWeeklyTasks) ? dailyOrWeeklyTasks : []);
 
-  if (dailyTasks.length > 0) {
-    parts.push(`Today (${dailyTasks.length}): ${dailyTasks.join(', ')}`);
-  }
-  if (weeklyTasks.length > 0) {
-    parts.push(`Weekly (${weeklyTasks.length}): ${weeklyTasks.join(', ')}`);
+  const pendingList = weeklyTasks.filter(Boolean);
+
+  if (pendingList.length === 0) {
+    return 'No pending weekly tasks remaining!';
   }
 
-  return parts.length > 0 ? parts.join(' • ') : 'No pending tasks remaining!';
+  const list = pendingList.map(t => `• ${t}`).join('\n');
+  return `Weekly (${pendingList.length}):\n${list}`;
 }
 
 export function calculateInactivityDays(activeDates = [], items = []) {
@@ -263,10 +251,10 @@ export async function triggerPendingTasksNotification(timeOfDay, detailsOrCount)
 
   let bodyText = '';
   if (detailsOrCount && typeof detailsOrCount === 'object') {
-    bodyText = formatPendingTasksBody(timeOfDay, detailsOrCount.dailyTasks, detailsOrCount.weeklyTasks);
+    bodyText = formatPendingTasksBody(timeOfDay, detailsOrCount.weeklyTasks || []);
   } else {
     const count = Number(detailsOrCount) || 1;
-    bodyText = `You have ${count} pending task${count === 1 ? '' : 's'}.`;
+    bodyText = `You have ${count} pending weekly task${count === 1 ? '' : 's'}.`;
     if (timeOfDay === 'morning') {
       bodyText += ' Pick 1–3 to tackle.';
     } else if (timeOfDay === 'afternoon') {

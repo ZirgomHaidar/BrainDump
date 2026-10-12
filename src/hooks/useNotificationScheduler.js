@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { subscribeToItems, subscribeToWeeklyItems } from '../firebase';
+import { subscribeToItems, subscribeToPendingWeeklyItems } from '../firebase';
 import {
   getNotificationSettings,
   isSlotDispatched,
@@ -55,7 +55,7 @@ export function useNotificationScheduler(activeDates = []) {
     const unsubItems = subscribeToItems(todayStr, (items) => {
       todayItemsRef.current = items;
     });
-    const unsubWeekly = subscribeToWeeklyItems(currentWeekStr, (weekly) => {
+    const unsubWeekly = subscribeToPendingWeeklyItems(currentWeekStr, (weekly) => {
       currentWeeklyItemsRef.current = weekly;
     });
 

@@ -110,6 +110,16 @@ export function subscribeToWeeklyItems(weekStr, callback) {
   });
 }
 
+export function subscribeToPendingWeeklyItems(currentWeekStr, callback) {
+  const q = query(weeklyRef, where('done', '==', false));
+  return onSnapshot(q, (snap) => {
+    const items = snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((item) => !item.weekStr || item.weekStr <= currentWeekStr);
+    callback(items);
+  });
+}
+
 export function subscribeToActiveWeeks(callback) {
   return onSnapshot(weeklyRef, (snapshot) => {
     const weekSet = new Set();
