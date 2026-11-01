@@ -722,5 +722,95 @@
         "num_slides": 6
       }
     }
+  },
+  {
+    "text": "Someone with a negative mind will never live a positive life, so...\nPlans got cancelled?\nMore time to do something for yourself.\nMissed your alarm?\nMaybe you needed more rest.\nTook a wrong turn?\nMore time to enjoy your music.\nNo one to go with?\nTime to enjoy your own company.\nPlayed badly?\nNow you know what to work on.\nMade a mistake?\nAt least you learned what not to repeat.\nMissed an opportunity?\nThere may be another one waiting for you.\nLife won't always go the way you want, but that doesn't mean everything that goes wrong has to ruin your day.\nYou can't control everything that happens to you, but you can choose how you look at it.\nTHE ART OF SELF-IMPROVEMENT",
+    "category": "principle",
+    "author": "positivitykaizen",
+    "createdAt": "2026-10-12T13:51:51.497590+00:00",
+    "sourceUrl": "https://www.instagram.com/p/DeRjD_RCF90/",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 8187,
+      "stage2_tokens": 3219,
+      "total_tokens": 11406,
+      "ctx_limit": 64128,
+      "ctx_percent": 17.79,
+      "prompt_tokens": 8931,
+      "completion_tokens": 2475,
+      "speed": 50.9,
+      "duration_seconds": 114.7,
+      "duration_formatted": "1m 54s",
+      "breakdown": {
+        "total_seconds": 114.7,
+        "total_formatted": "1m 54s",
+        "download_seconds": 2.3,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 85.7,
+        "stage2_seconds": 21.4,
+        "num_slides": 10
+      }
+    }
+  },
+  {
+    "text": "how to avoid burnout\nadvice from a goat\nstop acting like everything is urgent.. the grass will still be there in ten minutes..\nhumans are always saying \"i'll rest when i'm finished.\"\ni'm finished.\nfinished with what?\nbeing alive?\nyou cannot keep giving 100% every day.\nsome days i give 40%.\nsome days i stare at a fence.\nboth are important.\ntake proper breaks.\nnot a break where you sit down and answer emails.\nsay no before your body has to say it for you.\nbecause eventually it will.\nusually by making you cry over a spoon.\nyou don't have to earn rest.\ni have achieved absolutely nothing today.\nand yet, here i am.\nresting beautifully.\nslow down before life slows you down.\neat something.\ngo outside.\nignore one problem.\nyou are not lazy.\nyou are tired from carrying too much for too long.\nput some of it down.\nyou were not put here to spend your whole life on empty.\nrest is not giving up.\nsometimes, it is how you keep going.",
+    "category": "lesson",
+    "author": "bradandthegoat",
+    "createdAt": "2026-10-12T13:54:06.510045+00:00",
+    "sourceUrl": "https://www.instagram.com/p/DeEFDSyiDFK/",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 8363,
+      "stage2_tokens": 3277,
+      "total_tokens": 11640,
+      "ctx_limit": 64128,
+      "ctx_percent": 18.15,
+      "prompt_tokens": 8705,
+      "completion_tokens": 2935,
+      "speed": 45.5,
+      "duration_seconds": 128.3,
+      "duration_formatted": "2m 8s",
+      "breakdown": {
+        "total_seconds": 128.3,
+        "total_formatted": "2m 8s",
+        "download_seconds": 3.1,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 92.7,
+        "stage2_seconds": 27.4,
+        "num_slides": 10
+      }
+    }
+  },
+  {
+    "text": "COMFORT KILLS POTENTIAL\nand the scary part is, it doesn't feel like failure\nit feels like peace like safety like having enough\nuntil one day, you realize you've spent years choosing what feels easy over what could make you great\nAnd the life you could've lived becomes the one you'll never know",
+    "category": "lesson",
+    "author": "wehate.mondays",
+    "createdAt": "2026-11-01T07:48:15.233889+00:00",
+    "sourceUrl": "https://www.instagram.com/p/DeoMccrgZJR",
+    "sourcePlatform": "instagram",
+    "tokenUsage": {
+      "model": "MiniCPM-V-4.6 (Stage 1) -> Huihui-gemma-4 (Stage 2)",
+      "stage1_tokens": 4173,
+      "stage2_tokens": 2505,
+      "total_tokens": 6678,
+      "ctx_limit": 64128,
+      "ctx_percent": 10.41,
+      "prompt_tokens": 5135,
+      "completion_tokens": 1543,
+      "speed": 59.7,
+      "duration_seconds": 54.4,
+      "duration_formatted": "54s",
+      "breakdown": {
+        "total_seconds": 54.4,
+        "total_formatted": "54s",
+        "download_seconds": 2.8,
+        "keyframes_seconds": 0.0,
+        "stage1_seconds": 29.1,
+        "stage2_seconds": 14.5,
+        "num_slides": 5
+      }
+    }
   }
 ]

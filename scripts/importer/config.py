@@ -14,7 +14,7 @@ from typing import Dict
 # ── Paths & Endpoints ──────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 LOCAL_CACHE_FILE = PROJECT_ROOT / "scripts" / "motivations_imported.json"
-DEFAULT_ROUTER_URL = os.environ.get("LLAMA_SERVER_URL", "http://127.0.0.1:8080")
+DEFAULT_ROUTER_URL = os.environ.get("LLAMA_SERVER_URL", "http://127.0.0.1:9931")
 
 # ── Model Config ───────────────────────────────────────────────────
 MODEL_VIDEO = "MiniCPM-V-4.6"

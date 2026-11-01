@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-PORT="${LLAMA_PORT:-8080}"
+PORT="${LLAMA_PORT:-9931}"
 HOST="${LLAMA_HOST:-127.0.0.1}"
 MODELS_PRESET="${LLAMA_MODELS_PRESET:-$SCRIPT_DIR/models.ini}"
 MODELS_MAX="${LLAMA_MODELS_MAX:-1}"
@@ -50,7 +50,7 @@ if [[ "$ENABLE_LISTEN" -eq 1 ]]; then
     --host "$HOST" \
     --port "$PORT" \
     --slot-save-path "/tmp/braindump_llama_slots" \
-    "${SERVER_ARGS[@]}" &
+    ${SERVER_ARGS[@]+"${SERVER_ARGS[@]}"} &
   LLAMA_PID=$!
 
   cleanup() {
@@ -68,7 +68,7 @@ if [[ "$ENABLE_LISTEN" -eq 1 ]]; then
     PYTHON_BIN="python3"
   fi
 
-  exec "$PYTHON_BIN" "$SCRIPT_DIR/import_motivation.py" --listen --server "http://$HOST:$PORT"
+  "$PYTHON_BIN" "$SCRIPT_DIR/import_motivation.py" --listen --server "http://$HOST:$PORT"
 else
   mkdir -p "/tmp/braindump_llama_slots"
   exec "$LLAMA_BIN" \
@@ -77,6 +77,6 @@ else
     --host "$HOST" \
     --port "$PORT" \
     --slot-save-path "/tmp/braindump_llama_slots" \
-    "${SERVER_ARGS[@]}"
+    ${SERVER_ARGS[@]+"${SERVER_ARGS[@]}"}
 fi
 

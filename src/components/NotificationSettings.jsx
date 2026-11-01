@@ -243,7 +243,7 @@ export default function NotificationSettings({ isOpen, onClose, items = [], week
             <div className="notif-modal__item-info">
               <div className="notif-modal__item-title">1. Pending Weekly Tasks</div>
               <div className="notif-modal__item-desc">
-                Summaries at <strong>08:00</strong>, <strong>12:30</strong>, and <strong>17:00</strong> with uncompleted weekly plan entries.
+                Summaries at <strong>08:00</strong>, <strong>12:30</strong>, and <strong>17:00</strong> with current and upcoming weekly plan entries.
               </div>
             </div>
             <div className="notif-modal__item-actions">

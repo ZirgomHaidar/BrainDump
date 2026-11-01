@@ -361,11 +361,12 @@ export function guestSubscribeToWeeklyItems(weekStr, callback) {
   return () => listeners.weekly.delete(run);
 }
 
-export function guestSubscribeToPendingWeeklyItems(currentWeekStr, callback) {
+export function guestSubscribeToPendingWeeklyItems(currentWeekStrOrCallback, maybeCallback) {
+  const callback = typeof currentWeekStrOrCallback === 'function' ? currentWeekStrOrCallback : maybeCallback;
   const run = () => {
     const all = getRaw(GUEST_WEEKLY_KEY, []);
     const matching = all
-      .filter((w) => !w.done && (!w.weekStr || w.weekStr <= currentWeekStr))
+      .filter((w) => !w.done)
       .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
     callback(matching);
   };

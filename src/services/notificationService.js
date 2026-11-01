@@ -180,36 +180,80 @@ export async function sendNotification(title, options = {}) {
 
 // ── Notification Content Generators & Calculations ────────
 
+function getWeekMonday(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+function toWeekStr(monday) {
+  const d = new Date(monday);
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  const weekNum = 1 + Math.round(((d - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+  return `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+}
+
 export function calculatePendingTasks(items = [], weeklyItems = []) {
   // Only uncompleted items across the weekly plan
   return weeklyItems.filter(i => !i.done).length;
 }
 
-export function getPendingTasksBreakdown(items = [], weeklyItems = []) {
-  const weeklyTasks = weeklyItems
-    .filter(i => !i.done)
-    .map(i => i.text?.trim())
-    .filter(Boolean);
+export function getPendingTasksBreakdown(items = [], weeklyItems = [], targetWeekStr) {
+  const currentWeekStr = targetWeekStr || toWeekStr(getWeekMonday(new Date()));
+
+  const currentTasks = [];
+  const upcomingTasks = [];
+
+  weeklyItems.forEach((i) => {
+    if (i.done) return;
+    const text = i.text?.trim();
+    if (!text) return;
+    if (!i.weekStr || i.weekStr <= currentWeekStr) {
+      currentTasks.push(text);
+    } else {
+      upcomingTasks.push(text);
+    }
+  });
 
   return {
-    count: weeklyTasks.length,
-    weeklyTasks,
+    count: currentTasks.length + upcomingTasks.length,
+    currentTasks,
+    upcomingTasks,
+    weeklyTasks: [...currentTasks, ...upcomingTasks],
   };
 }
 
-export function formatPendingTasksBody(timeOfDay, dailyOrWeeklyTasks = [], maybeWeeklyTasks = []) {
-  const weeklyTasks = Array.isArray(maybeWeeklyTasks) && maybeWeeklyTasks.length > 0
-    ? maybeWeeklyTasks
-    : (Array.isArray(dailyOrWeeklyTasks) ? dailyOrWeeklyTasks : []);
+export function formatPendingTasksBody(timeOfDay, detailsOrTasks) {
+  let currentTasks = [];
+  let upcomingTasks = [];
 
-  const pendingList = weeklyTasks.filter(Boolean);
-
-  if (pendingList.length === 0) {
-    return 'No pending weekly tasks remaining!';
+  if (detailsOrTasks && typeof detailsOrTasks === 'object' && !Array.isArray(detailsOrTasks)) {
+    currentTasks = Array.isArray(detailsOrTasks.currentTasks) ? detailsOrTasks.currentTasks : [];
+    upcomingTasks = Array.isArray(detailsOrTasks.upcomingTasks) ? detailsOrTasks.upcomingTasks : [];
+    if (currentTasks.length === 0 && upcomingTasks.length === 0 && Array.isArray(detailsOrTasks.weeklyTasks)) {
+      currentTasks = detailsOrTasks.weeklyTasks;
+    }
+  } else if (Array.isArray(detailsOrTasks)) {
+    currentTasks = detailsOrTasks;
   }
 
-  const list = pendingList.map(t => `• ${t}`).join('\n');
-  return `Weekly (${pendingList.length}):\n${list}`;
+  const sections = [];
+
+  if (currentTasks.length > 0) {
+    const list = currentTasks.map((t) => `• ${t}`).join('\n');
+    sections.push(`Current (${currentTasks.length}):\n${list}`);
+  }
+
+  if (upcomingTasks.length > 0) {
+    const list = upcomingTasks.map((t) => `• ${t}`).join('\n');
+    sections.push(`Upcoming (${upcomingTasks.length}):\n${list}`);
+  }
+
+  return sections.length > 0 ? sections.join('\n\n') : 'No pending weekly tasks remaining!';
 }
 
 export function calculateInactivityDays(activeDates = [], items = []) {
@@ -251,7 +295,7 @@ export async function triggerPendingTasksNotification(timeOfDay, detailsOrCount)
 
   let bodyText = '';
   if (detailsOrCount && typeof detailsOrCount === 'object') {
-    bodyText = formatPendingTasksBody(timeOfDay, detailsOrCount.weeklyTasks || []);
+    bodyText = formatPendingTasksBody(timeOfDay, detailsOrCount);
   } else {
     const count = Number(detailsOrCount) || 1;
     bodyText = `You have ${count} pending weekly task${count === 1 ? '' : 's'}.`;

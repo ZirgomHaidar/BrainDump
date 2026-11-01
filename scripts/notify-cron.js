@@ -189,7 +189,7 @@ async function runCron() {
           if (details.count <= 0) return null;
           return {
             title: 'BRAINDUMP · Morning Focus',
-            body: formatPendingTasksBody('morning', details.weeklyTasks),
+            body: formatPendingTasksBody('morning', details),
             tag: 'bd-pending-morning',
           };
         }
@@ -203,7 +203,7 @@ async function runCron() {
           if (details.count <= 0) return null;
           return {
             title: 'BRAINDUMP · Afternoon Check-in',
-            body: formatPendingTasksBody('afternoon', details.weeklyTasks),
+            body: formatPendingTasksBody('afternoon', details),
             tag: 'bd-pending-afternoon',
           };
         }
@@ -217,7 +217,7 @@ async function runCron() {
           if (details.count <= 0) return null;
           return {
             title: 'BRAINDUMP · Evening Wrap-up',
-            body: formatPendingTasksBody('evening', details.weeklyTasks),
+            body: formatPendingTasksBody('evening', details),
             tag: 'bd-pending-evening',
           };
         }
@@ -357,40 +357,60 @@ async function markDispatched(docRef, slotRecordKey, existingDispatched = {}) {
 
 // ── 5. Firestore Task Calculators ─────────────────────────────────
 
-function formatPendingTasksBody(period, dailyOrWeeklyTasks = [], maybeWeeklyTasks = []) {
-  const weeklyTasks = Array.isArray(maybeWeeklyTasks) && maybeWeeklyTasks.length > 0
-    ? maybeWeeklyTasks
-    : (Array.isArray(dailyOrWeeklyTasks) ? dailyOrWeeklyTasks : []);
+function formatPendingTasksBody(period, detailsOrTasks) {
+  let currentTasks = [];
+  let upcomingTasks = [];
 
-  const pendingList = weeklyTasks.filter(Boolean);
-
-  if (pendingList.length === 0) {
-    return 'No pending weekly tasks remaining!';
+  if (detailsOrTasks && typeof detailsOrTasks === 'object' && !Array.isArray(detailsOrTasks)) {
+    currentTasks = Array.isArray(detailsOrTasks.currentTasks) ? detailsOrTasks.currentTasks : [];
+    upcomingTasks = Array.isArray(detailsOrTasks.upcomingTasks) ? detailsOrTasks.upcomingTasks : [];
+    if (currentTasks.length === 0 && upcomingTasks.length === 0 && Array.isArray(detailsOrTasks.weeklyTasks)) {
+      currentTasks = detailsOrTasks.weeklyTasks;
+    }
+  } else if (Array.isArray(detailsOrTasks)) {
+    currentTasks = detailsOrTasks;
   }
 
-  const list = pendingList.map(t => `• ${t}`).join('\n');
-  return `Weekly (${pendingList.length}):\n${list}`;
+  const sections = [];
+
+  if (currentTasks.length > 0) {
+    const list = currentTasks.map(t => `• ${t}`).join('\n');
+    sections.push(`Current (${currentTasks.length}):\n${list}`);
+  }
+
+  if (upcomingTasks.length > 0) {
+    const list = upcomingTasks.map(t => `• ${t}`).join('\n');
+    sections.push(`Upcoming (${upcomingTasks.length}):\n${list}`);
+  }
+
+  return sections.length > 0 ? sections.join('\n\n') : 'No pending weekly tasks remaining!';
 }
 
 async function getPendingTasksDetails(dateStr, currentWeekStr) {
   try {
-    // Only pending weekly items up to the current week that are not marked finished
     const weeklySnap = await db.collection('weeklyItems').where('done', '==', false).get();
-    const weeklyTasks = [];
+    const currentTasks = [];
+    const upcomingTasks = [];
+
     weeklySnap.forEach(d => {
       const item = d.data();
-      if ((!item.weekStr || item.weekStr <= currentWeekStr) && item.text?.trim()) {
-        weeklyTasks.push(item.text.trim());
+      const text = item.text?.trim();
+      if (!text) return;
+      if (!item.weekStr || item.weekStr <= currentWeekStr) {
+        currentTasks.push(text);
+      } else {
+        upcomingTasks.push(text);
       }
     });
 
     return {
-      count: weeklyTasks.length,
-      weeklyTasks,
+      count: currentTasks.length + upcomingTasks.length,
+      currentTasks,
+      upcomingTasks,
     };
   } catch (err) {
     console.error('Error calculating pending tasks:', err.message);
-    return { count: 0, weeklyTasks: [] };
+    return { count: 0, currentTasks: [], upcomingTasks: [] };
   }
 }
 

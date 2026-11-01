@@ -129,13 +129,35 @@ def wait_for_server(
 def clear_llm_context(server_url: str, model_name: str) -> None:
     """
     Clears the KV cache slots for a model on llama-server to reclaim VRAM.
+    Checks if model is currently loaded; if unloaded in router mode, returns immediately.
     Checks /slots and POSTs action=erase to active slots.
     """
     try:
-        slots_url = f"{server_url.rstrip('/')}/slots"
-        resp = requests.get(slots_url, timeout=3)
+        base_url = server_url.rstrip("/")
+        # In router mode, check if model is loaded first so we don't accidentally
+        # force-load an unloaded model just to clear its slots.
+        try:
+            m_resp = requests.get(f"{base_url}/models", timeout=5)
+            if m_resp.status_code == 200:
+                data = m_resp.json().get("data", [])
+                for m in data:
+                    m_id = m.get("id", "")
+                    aliases = m.get("aliases", [])
+                    if model_name.lower() in m_id.lower() or any(model_name.lower() == a.lower() for a in aliases):
+                        status = m.get("status", {}).get("value")
+                        if status == "unloaded":
+                            return
+        except Exception:
+            pass
+
+        slots_url = f"{base_url}/slots"
+        # Support router mode (0.8.0+) by passing model query parameter with generous timeout
+        resp = requests.get(slots_url, params={"model": model_name} if model_name else None, timeout=30)
         if resp.status_code != 200:
-            return
+            # Fallback for standalone mode without model param
+            resp = requests.get(slots_url, timeout=10)
+            if resp.status_code != 200:
+                return
 
         slots_data = resp.json()
         if not isinstance(slots_data, list):
@@ -146,10 +168,12 @@ def clear_llm_context(server_url: str, model_name: str) -> None:
             slot_model = slot.get("model", "")
             if slot_id is not None and (not slot_model or model_name.lower() in slot_model.lower()):
                 try:
+                    # In 0.8.0 router mode, action is a query param and model is in the payload
                     requests.post(
                         f"{slots_url}/{slot_id}",
-                        json={"action": "erase"},
-                        timeout=3,
+                        params={"action": "erase", "model": model_name} if model_name else {"action": "erase"},
+                        json={"action": "erase", "model": model_name} if model_name else {"action": "erase"},
+                        timeout=10,
                     )
                 except Exception:
                     pass
